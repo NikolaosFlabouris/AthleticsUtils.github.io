@@ -1,0 +1,30 @@
+{
+  "name": "athletics-scoring-extractor",
+  "version": "1.0.0",
+  "description": "Extract World Athletics scoring tables from PDF to JSON",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "extract": "node index.js",
+    "validate": "node validate.js",
+    "examples": "node examples.js",
+    "help": "echo 'Available commands:\n  npm start [pdf] [output] - Extract tables\n  npm run validate [json] - Validate extracted data\n  npm run examples [json] - Run usage examples'"
+  },
+  "keywords": [
+    "athletics",
+    "scoring",
+    "pdf",
+    "parser",
+    "world-athletics",
+    "track-and-field"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "pdf-parse": "^1.1.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
