@@ -9,7 +9,8 @@
     "extract": "node index.js",
     "validate": "node validate.js",
     "examples": "node examples.js",
-    "help": "echo 'Available commands:\n  npm start [pdf] [output] - Extract tables\n  npm run validate [json] - Validate extracted data\n  npm run examples [json] - Run usage examples'"
+    "publish": "node index.js World_Athletics_Scoring_Tables_of_Athletics_2025.pdf athletics_scoring_tables.json",
+    "help": "echo 'Available commands:\n  npm start [pdf] [output] - Extract tables\n  npm run extract [pdf] [output] - Same as start\n  npm run publish - Extract and publish to website\n  npm run validate [json] - Validate extracted data\n  npm run examples [json] - Run usage examples'"
   },
   "keywords": [
     "athletics",

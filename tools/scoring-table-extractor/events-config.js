@@ -135,9 +135,9 @@ export const eventsConfig = {
     category: 'combined',
     description: 'Combined/Multi-event competitions',
     events: [
-      { abbr: 'dec', name: 'decathlon', disciplines: 10, genders: ['men'] },
-      { abbr: 'hept', name: 'heptathlon', disciplines: 7, genders: ['women'], allowShortTrack: true },
-      { abbr: 'pent', name: 'pentathlon', disciplines: 5, genders: ['women'], allowShortTrack: true },
+      { abbr: 'dec', name: 'decathlon' },
+      { abbr: 'hept', name: 'heptathlon', allowShortTrack: true },
+      { abbr: 'pent', name: 'pentathlon', allowShortTrack: true },
     ]
   },
 
@@ -152,20 +152,6 @@ export const eventsConfig = {
       { distance: 200, unit: 'm', name: '4x200m', allowHurdles: false, allowShortTrack: true },
       { distance: 400, unit: 'm', name: '4x400m', allowHurdles: false, allowShortTrack: true, allowMixed: true },
     ]
-  },
-
-  /**
-   * Gender-specific rules
-   */
-  genderRules: {
-    // Events where 'mix' modifier changes gender to 'mixed'
-    mixedGenderEvents: ['4x400mix', '4x400mix sh'],
-
-    // Events typically only for men
-    menOnly: ['dec', 'hept sh'],
-
-    // Events typically only for women
-    womenOnly: ['hept', 'pent', 'pent sh'],
   },
 
   /**

@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import pdfParse from 'pdf-parse';
 import { eventsConfig, getCategoryForEvent as getCategory, isKnownEvent, getEventInfo } from './events-config.js';
 
@@ -372,14 +373,6 @@ class EnhancedScoringTableExtractor {
 
     // Validate it looks like a performance (numeric with optional : and .)
     if (/^[\d:.]+$/.test(value)) {
-      // For distance-only values (no colons), add 'km' suffix if it's a whole number >= 5
-      // This handles cases like "5", "10", "20" which should be "5km", "10km", "20km"
-      if (!/[:]/.test(value)) {
-        const numValue = parseFloat(value);
-        if (Number.isInteger(numValue) && numValue >= 5) {
-          return value + 'km';
-        }
-      }
       return value;
     }
 
@@ -513,10 +506,61 @@ class EnhancedScoringTableExtractor {
     // Clean and sort data before exporting
     this.cleanAndSortData();
 
-    const json = JSON.stringify(this.tables, null, 2);
-    fs.writeFileSync(outputPath, json);
+    // Convert data to array format: [points, performance]
+    const compactData = {};
+    for (const [gender, categories] of Object.entries(this.tables)) {
+      compactData[gender] = {};
+      for (const [category, events] of Object.entries(categories)) {
+        compactData[gender][category] = {};
+        for (const [eventName, entries] of Object.entries(events)) {
+          // Convert from {performance: "9.46", points: 1400} to [1400, "9.46"]
+          compactData[gender][category][eventName] = entries.map(entry => [entry.points, entry.performance]);
+        }
+      }
+    }
+
+    // Generate pretty-printed version (with formatting)
+    let prettyJson = JSON.stringify(compactData, null, 2);
+
+    // Replace multi-line [points, performance] arrays with single-line format
+    // Matches patterns like:
+    //   [
+    //     1400,
+    //     "35.84"
+    //   ]
+    // And replaces with: [1400, "35.84"]
+    prettyJson = prettyJson.replace(/\[\s+(\d+),\s+"([^"]+)"\s+\]/g, '[$1, "$2"]');
+
+    // Generate minified version (no whitespace)
+    const minifiedJson = JSON.stringify(compactData);
+
+    // Write both versions to tool directory
+    fs.writeFileSync(outputPath, prettyJson);
+
+    // Create minified filename by adding .min before extension
+    const minifiedPath = outputPath.replace(/\.json$/, '.min.json');
+    fs.writeFileSync(minifiedPath, minifiedJson);
 
     console.log(`\n💾 Data exported to: ${outputPath}`);
+    console.log(`💾 Minified version: ${minifiedPath}`);
+
+    // Copy minified version to website's public/data directory
+    const websiteDataDir = path.join(path.dirname(path.dirname(__dirname)), 'public', 'data');
+    const websiteDataPath = path.join(websiteDataDir, path.basename(minifiedPath));
+
+    try {
+      // Ensure the directory exists
+      if (!fs.existsSync(websiteDataDir)) {
+        fs.mkdirSync(websiteDataDir, { recursive: true });
+      }
+
+      // Copy minified file to website data directory
+      fs.copyFileSync(minifiedPath, websiteDataPath);
+      console.log(`📦 Published to website: ${websiteDataPath}`);
+    } catch (error) {
+      console.warn(`⚠️  Warning: Could not publish to website directory: ${error.message}`);
+    }
+
     this.printSummary();
 
     return outputPath;
@@ -556,29 +600,25 @@ class EnhancedScoringTableExtractor {
    * Print extraction summary
    */
   printSummary() {
-    let totalEvents = 0;
-    let totalEntries = 0;
-    
+    const stats = this.getStatistics();
+
     console.log('\n' + '='.repeat(50));
     console.log('📊 EXTRACTION SUMMARY');
     console.log('='.repeat(50));
-    
+
     for (const [gender, categories] of Object.entries(this.tables)) {
       console.log(`\n${gender.toUpperCase()}:`);
-      
+
       for (const [category, events] of Object.entries(categories)) {
         const eventCount = Object.keys(events).length;
         const entryCount = Object.values(events).reduce((sum, data) => sum + data.length, 0);
-        
+
         console.log(`  ${category.padEnd(20)} ${eventCount} events, ${entryCount.toLocaleString()} entries`);
-        
-        totalEvents += eventCount;
-        totalEntries += entryCount;
       }
     }
-    
+
     console.log('\n' + '='.repeat(50));
-    console.log(`🏆 TOTAL: ${totalEvents} events with ${totalEntries.toLocaleString()} scoring entries`);
+    console.log(`🏆 TOTAL: ${stats.totalEvents} events with ${stats.totalEntries.toLocaleString()} scoring entries`);
     console.log('='.repeat(50) + '\n');
   }
 

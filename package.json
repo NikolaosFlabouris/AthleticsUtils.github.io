@@ -1,0 +1,36 @@
+{
+  "name": "athleticsutils.github.io",
+  "version": "1.0.0",
+  "description": "Athletics utilities and calculators - performance lookup, equivalency calculator, and more",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "npm run build && gh-pages -d dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NikolaosFlabouris/AthleticsUtils.github.io.git"
+  },
+  "keywords": [
+    "athletics",
+    "track-and-field",
+    "calculator",
+    "scoring-tables",
+    "performance",
+    "pwa"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NikolaosFlabouris/AthleticsUtils.github.io/issues"
+  },
+  "homepage": "https://athleticsutils.github.io/",
+  "devDependencies": {
+    "gh-pages": "^6.3.0",
+    "vite": "^7.1.12",
+    "vite-plugin-pwa": "^1.1.0",
+    "workbox-window": "^7.3.0"
+  }
+}
