@@ -47,7 +47,9 @@ class ScoringDataLoader {
    */
   async fetchData() {
     try {
-      const response = await fetch('/data/athletics_scoring_tables.min.json');
+      // Use import.meta.env.BASE_URL to respect Vite's base configuration
+      const baseUrl = import.meta.env?.BASE_URL || '/';
+      const response = await fetch(`${baseUrl}data/athletics_scoring_tables.min.json`);
 
       if (!response.ok) {
         throw new Error(`Failed to load scoring tables: ${response.status} ${response.statusText}`);

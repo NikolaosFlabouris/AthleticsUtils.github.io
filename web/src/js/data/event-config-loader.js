@@ -47,7 +47,9 @@ class EventConfigLoader {
    */
   async fetchData() {
     try {
-      const response = await fetch('/data/events_config.json');
+      // Use import.meta.env.BASE_URL to respect Vite's base configuration
+      const baseUrl = import.meta.env?.BASE_URL || '/';
+      const response = await fetch(`${baseUrl}data/events_config.json`);
 
       if (!response.ok) {
         throw new Error(`Failed to load event config: ${response.status} ${response.statusText}`);
