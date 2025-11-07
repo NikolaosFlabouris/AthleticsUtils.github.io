@@ -137,6 +137,16 @@ body {
   cursor: not-allowed;
 }
 
+.form-input.input-error {
+  border-color: var(--color-error);
+  background-color: rgba(220, 38, 38, 0.05);
+}
+
+.form-input.input-error:focus {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
 .form-help {
   font-size: var(--font-size-xs);
   color: var(--color-text-tertiary);

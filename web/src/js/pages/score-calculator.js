@@ -6,6 +6,7 @@ import { Navigation } from '../components/navigation.js';
 import { BaseCalculator } from '../components/calculator-base.js';
 import { lookupPoints, findEquivalentPerformances } from '../calculators/performance-lookup.js';
 import { parsePerformance, formatPerformance } from '../utils/performance-parser.js';
+import { eventConfigLoader } from '../data/event-config-loader.js';
 
 class PerformanceCalculator extends BaseCalculator {
   async initialize() {
@@ -16,16 +17,23 @@ class PerformanceCalculator extends BaseCalculator {
   handleCalculate() {
     const performanceValue = this.performanceInput.value.trim();
 
+    // Check if empty or no event selected
     if (!this.currentGender || !this.currentEvent || !performanceValue) {
+      if (!performanceValue) {
+        this.performanceInput.classList.add('input-error');
+        this.showError('Please enter a performance value.');
+      }
       return;
     }
 
     try {
       this.hideError();
+      this.performanceInput.classList.remove('input-error');
 
       const normalizedPerformance = parsePerformance(performanceValue, this.currentEvent);
 
       if (!normalizedPerformance) {
+        this.performanceInput.classList.add('input-error');
         this.showError('Invalid performance format. Please enter a valid number (e.g., 10.5 or 1:30.5)');
         return;
       }
@@ -33,6 +41,7 @@ class PerformanceCalculator extends BaseCalculator {
       const result = lookupPoints(this.currentGender, this.currentEvent, normalizedPerformance);
 
       if (!result) {
+        this.performanceInput.classList.add('input-error');
         this.showError('Could not find points for this performance. Please check your input.');
         return;
       }
@@ -42,6 +51,7 @@ class PerformanceCalculator extends BaseCalculator {
 
     } catch (error) {
       console.error('Calculation error:', error);
+      this.performanceInput.classList.add('input-error');
       this.showError('An error occurred during calculation. Please try again.');
     }
   }
@@ -55,7 +65,8 @@ class PerformanceCalculator extends BaseCalculator {
 
     const title = document.createElement('div');
     title.className = 'result-card__title';
-    title.textContent = `${this.currentEvent} - ${this.capitalizeFirst(this.currentGender)}`;
+    const eventDisplayName = eventConfigLoader.getEventInfo(this.currentEvent)?.displayName || this.currentEvent;
+    title.textContent = `${eventDisplayName} - ${this.capitalizeFirst(this.currentGender)}`;
 
     const points = document.createElement('div');
     points.className = 'result-card__points';
@@ -97,7 +108,8 @@ class PerformanceCalculator extends BaseCalculator {
 
       const eventName = document.createElement('div');
       eventName.className = 'equivalency-item__event';
-      eventName.textContent = equiv.event;
+      const equivDisplayName = eventConfigLoader.getEventInfo(equiv.event)?.displayName || equiv.event;
+      eventName.textContent = equivDisplayName;
 
       const performance = document.createElement('div');
       performance.className = 'equivalency-item__performance';
