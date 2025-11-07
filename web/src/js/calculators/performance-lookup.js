@@ -7,6 +7,8 @@ import { scoringDataLoader } from '../data/scoring-data-loader.js';
 
 /**
  * Find points for a given performance in an event
+ * Per World Athletics rules: When a performance falls between two table entries,
+ * the lower score shall be assigned.
  * @param {string} gender
  * @param {string} event
  * @param {string} performance - Normalized performance value
@@ -37,9 +39,8 @@ export function lookupPoints(gender, event, performance) {
   // Determine if this is a "lower is better" event (times) or "higher is better" (distances)
   const isDistanceEvent = isFieldEvent(event);
 
-  // Find exact match or closest performance
-  let closestEntry = null;
-  let exactMatch = false;
+  // Find exact match or the entry with lower points when between two values
+  let lowerPointsEntry = null;
 
   for (const [points, perf] of eventData) {
     const perfValue = parseFloat(perf);
@@ -53,25 +54,46 @@ export function lookupPoints(gender, event, performance) {
       };
     }
 
-    // Track closest entry
-    if (!closestEntry) {
-      closestEntry = [points, perf];
+    // Track the entry that should be used based on World Athletics rules
+    // When performance falls between table entries, use the lower score
+    if (isDistanceEvent) {
+      // For distance events (higher is better):
+      // If user's performance is better than table entry, skip it (they deserve higher points)
+      // If user's performance is worse than table entry, this could be their score
+      if (perfNum < perfValue) {
+        // User threw/jumped shorter - this entry or worse applies
+        if (!lowerPointsEntry || points < lowerPointsEntry[0]) {
+          lowerPointsEntry = [points, perf];
+        }
+      }
     } else {
-      const closestValue = parseFloat(closestEntry[1]);
-      const currentDiff = Math.abs(perfValue - perfNum);
-      const closestDiff = Math.abs(closestValue - perfNum);
-
-      if (currentDiff < closestDiff) {
-        closestEntry = [points, perf];
+      // For time events (lower is better):
+      // If user's performance is better than table entry, skip it (they deserve higher points)
+      // If user's performance is worse than table entry, this could be their score
+      if (perfNum > perfValue) {
+        // User ran slower - this entry or worse applies
+        if (!lowerPointsEntry || points < lowerPointsEntry[0]) {
+          lowerPointsEntry = [points, perf];
+        }
       }
     }
   }
 
-  if (closestEntry) {
+  // If no entry found where user performance is worse, they may have performed
+  // better than all table entries - find the best (highest points) entry
+  if (!lowerPointsEntry) {
+    for (const [points, perf] of eventData) {
+      if (!lowerPointsEntry || points > lowerPointsEntry[0]) {
+        lowerPointsEntry = [points, perf];
+      }
+    }
+  }
+
+  if (lowerPointsEntry) {
     return {
-      points: closestEntry[0],
+      points: lowerPointsEntry[0],
       exactMatch: false,
-      closestPerformance: closestEntry[1]
+      closestPerformance: lowerPointsEntry[1]
     };
   }
 
