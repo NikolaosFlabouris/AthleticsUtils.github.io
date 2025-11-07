@@ -5,6 +5,7 @@
 
 import { scoringDataLoader } from '../data/scoring-data-loader.js';
 import { eventConfigLoader } from '../data/event-config-loader.js';
+import { getPerformancePlaceholder } from '../utils/performance-parser.js';
 
 export class BaseCalculator {
   constructor(selectors) {
@@ -163,6 +164,25 @@ export class BaseCalculator {
 
     this.performanceInput.disabled = false;
     this.performanceInput.value = '';
+
+    // Update placeholder based on event type
+    const placeholder = getPerformancePlaceholder(eventKey);
+    this.performanceInput.placeholder = placeholder;
+
+    // Update help text based on event measurement format
+    const eventInfo = eventConfigLoader.getEventInfo(eventKey);
+    const helpText = this.performanceInput.nextElementSibling;
+    if (helpText && helpText.classList.contains('form-help')) {
+      const measurementFormat = eventInfo?.measurementFormat || 'time';
+      if (measurementFormat === 'distance') {
+        helpText.textContent = 'Enter distance in meters';
+      } else if (measurementFormat === 'points') {
+        helpText.textContent = 'Enter total points';
+      } else {
+        helpText.textContent = 'Enter time in seconds or (hh:)mm:ss(.SS) format';
+      }
+    }
+
     this.performanceInput.focus();
     this.calculateBtn.disabled = true;
     this.hideResults();
@@ -254,6 +274,8 @@ export class BaseCalculator {
     const value = e.target.value.trim();
     this.calculateBtn.disabled = !value;
     this.hideError();
+    // Clear error state when user starts typing
+    this.performanceInput?.classList.remove('input-error');
   }
 
   handleKeyPress(e) {
