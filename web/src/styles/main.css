@@ -158,13 +158,42 @@ body {
   width: 100%;
 }
 
+.event-trigger {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-background);
+}
+
+.event-trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.event-trigger:not(:disabled):hover {
+  border-color: var(--color-primary);
+}
+
+.event-trigger:not(:disabled):active {
+  background: var(--color-background-secondary);
+}
+
+.event-trigger__text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .event-dropdown {
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
   max-height: 400px;
-  overflow-y: auto;
   background: var(--color-background);
   border: 2px solid var(--color-primary);
   border-top: none;
@@ -172,6 +201,39 @@ body {
   box-shadow: var(--shadow-lg);
   z-index: 100;
   margin-top: -2px;
+  display: flex;
+  flex-direction: column;
+}
+
+.event-dropdown__search-container {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--color-background);
+  border-bottom: 2px solid var(--color-border-light);
+  padding: var(--spacing-sm);
+}
+
+.event-dropdown__search {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-background);
+  color: var(--color-text);
+  transition: border-color var(--transition-fast);
+}
+
+.event-dropdown__search:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.event-dropdown__list {
+  overflow-y: auto;
+  flex: 1;
 }
 
 .event-dropdown__category {
@@ -206,6 +268,11 @@ body {
   border-left-color: var(--color-primary);
 }
 
+.event-dropdown__item--selected {
+  background: rgba(26, 115, 232, 0.1);
+  font-weight: var(--font-weight-medium);
+}
+
 .event-dropdown__empty {
   padding: var(--spacing-lg);
   text-align: center;
@@ -213,20 +280,20 @@ body {
   font-size: var(--font-size-sm);
 }
 
-.event-dropdown::-webkit-scrollbar {
+.event-dropdown__list::-webkit-scrollbar {
   width: 8px;
 }
 
-.event-dropdown::-webkit-scrollbar-track {
+.event-dropdown__list::-webkit-scrollbar-track {
   background: var(--color-background-secondary);
 }
 
-.event-dropdown::-webkit-scrollbar-thumb {
+.event-dropdown__list::-webkit-scrollbar-thumb {
   background: var(--color-border);
   border-radius: var(--radius-full);
 }
 
-.event-dropdown::-webkit-scrollbar-thumb:hover {
+.event-dropdown__list::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-tertiary);
 }
 

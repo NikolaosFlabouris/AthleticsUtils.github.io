@@ -49,18 +49,29 @@
           </div>
 
           <div class="form-group">
-            <label for="event-input">Event</label>
+            <label for="event-trigger">Event</label>
             <div class="event-selector">
-              <input
-                type="text"
-                id="event-input"
-                class="form-input"
-                placeholder="Type to search events..."
-                autocomplete="off"
+              <button
+                type="button"
+                id="event-trigger"
+                class="event-trigger form-input"
                 disabled
               >
+                <span id="event-trigger-text" class="event-trigger__text">Select event...</span>
+              </button>
               <div id="event-dropdown" class="event-dropdown hidden">
-                <!-- Filtered events will appear here -->
+                <div class="event-dropdown__search-container">
+                  <input
+                    type="text"
+                    id="event-search"
+                    class="event-dropdown__search"
+                    placeholder="Search events..."
+                    autocomplete="off"
+                  >
+                </div>
+                <div id="event-list" class="event-dropdown__list">
+                  <!-- Filtered events will appear here -->
+                </div>
               </div>
             </div>
           </div>

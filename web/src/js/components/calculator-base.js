@@ -20,8 +20,11 @@ export class BaseCalculator {
 
   setupDOMElements() {
     this.genderSelect = document.querySelector(this.selectors.genderSelect);
-    this.eventInput = document.querySelector(this.selectors.eventInput);
+    this.eventTrigger = document.querySelector('#event-trigger');
+    this.eventTriggerText = document.querySelector('#event-trigger-text');
+    this.eventSearch = document.querySelector('#event-search');
     this.eventDropdown = document.querySelector(this.selectors.eventDropdown);
+    this.eventList = document.querySelector('#event-list');
     this.performanceInput = document.querySelector(this.selectors.performanceInput);
     this.calculateBtn = document.querySelector(this.selectors.calculateBtn);
     this.resultsContainer = document.querySelector(this.selectors.resultsContainer);
@@ -37,17 +40,16 @@ export class BaseCalculator {
 
   setupEventListeners() {
     this.genderSelect?.addEventListener('change', (e) => this.handleGenderChange(e));
-    this.eventInput?.addEventListener('input', (e) => this.handleEventInputChange(e));
-    this.eventInput?.addEventListener('focus', () => this.handleEventInputFocus());
-    this.eventInput?.addEventListener('blur', (e) => this.handleEventInputBlur(e));
-    this.eventInput?.addEventListener('keydown', (e) => this.handleEventInputKeydown(e));
+    this.eventTrigger?.addEventListener('click', () => this.handleEventTriggerClick());
+    this.eventSearch?.addEventListener('input', (e) => this.handleEventSearchInput(e));
+    this.eventSearch?.addEventListener('keydown', (e) => this.handleEventSearchKeydown(e));
     this.performanceInput?.addEventListener('input', (e) => this.handlePerformanceInput(e));
     this.performanceInput?.addEventListener('keypress', (e) => this.handleKeyPress(e));
     this.calculateBtn?.addEventListener('click', () => this.handleCalculate());
 
     // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
-      if (e.target !== this.eventInput && !this.eventDropdown?.contains(e.target)) {
+      if (!this.eventTrigger?.contains(e.target) && !this.eventDropdown?.contains(e.target)) {
         this.hideEventDropdown();
       }
     });
@@ -87,8 +89,8 @@ export class BaseCalculator {
     this.currentGender = e.target.value;
 
     if (!this.currentGender) {
-      this.eventInput.disabled = true;
-      this.eventInput.value = '';
+      this.eventTrigger.disabled = true;
+      this.eventTriggerText.textContent = 'Select event...';
       this.performanceInput.disabled = true;
       this.calculateBtn.disabled = true;
       this.hideResults();
@@ -97,8 +99,8 @@ export class BaseCalculator {
     }
 
     this.filterAvailableEvents(this.currentGender);
-    this.eventInput.disabled = false;
-    this.eventInput.value = '';
+    this.eventTrigger.disabled = false;
+    this.eventTriggerText.textContent = 'Select event...';
     this.performanceInput.disabled = true;
     this.calculateBtn.disabled = true;
     this.hideResults();
@@ -115,51 +117,42 @@ export class BaseCalculator {
     );
   }
 
-  handleEventInputChange(e) {
+  handleEventTriggerClick() {
+    if (this.eventTrigger.disabled) {
+      return;
+    }
+
+    if (this.eventDropdown.classList.contains('hidden')) {
+      this.showEventDropdown();
+    } else {
+      this.hideEventDropdown();
+    }
+  }
+
+  handleEventSearchInput(e) {
     const searchTerm = e.target.value.toLowerCase().trim();
     this.renderEventDropdown(searchTerm);
-
-    // Clear current selection if user is typing
-    if (this.currentEvent && this.eventInput.value !== this.currentEvent) {
-      this.currentEvent = '';
-      this.currentEventKey = '';
-      this.performanceInput.disabled = true;
-      this.calculateBtn.disabled = true;
-    }
   }
 
-  handleEventInputFocus() {
-    if (this.currentGender && this.availableEvents.length > 0) {
-      const searchTerm = this.eventInput.value.toLowerCase().trim();
-      this.renderEventDropdown(searchTerm);
-    }
-  }
-
-  handleEventInputBlur(e) {
-    // Use setTimeout to allow click events on dropdown items to fire first
-    setTimeout(() => {
-      this.hideEventDropdown();
-    }, 200);
-  }
-
-  handleEventInputKeydown(e) {
+  handleEventSearchKeydown(e) {
     // Handle Enter key to select first filtered event
     if (e.key === 'Enter') {
       e.preventDefault();
-      const firstItem = this.eventDropdown.querySelector('.event-dropdown__item');
+      const firstItem = this.eventList.querySelector('.event-dropdown__item');
       if (firstItem) {
         firstItem.click();
       }
     } else if (e.key === 'Escape') {
+      e.preventDefault();
       this.hideEventDropdown();
-      this.eventInput.blur();
+      this.eventTrigger.focus();
     }
   }
 
   selectEvent(eventKey, displayName) {
     this.currentEvent = eventKey;
     this.currentEventKey = eventKey;
-    this.eventInput.value = displayName;
+    this.eventTriggerText.textContent = displayName;
     this.hideEventDropdown();
 
     this.performanceInput.disabled = false;
@@ -200,8 +193,7 @@ export class BaseCalculator {
     }
 
     if (filteredEvents.length === 0) {
-      this.eventDropdown.innerHTML = '<div class="event-dropdown__empty">No events found</div>';
-      this.showEventDropdown();
+      this.eventList.innerHTML = '<div class="event-dropdown__empty">No events found</div>';
       return;
     }
 
@@ -243,7 +235,7 @@ export class BaseCalculator {
     });
 
     // Render dropdown
-    this.eventDropdown.innerHTML = '';
+    this.eventList.innerHTML = '';
 
     // Render primary events by category
     for (const category of sortedCategories) {
@@ -253,12 +245,18 @@ export class BaseCalculator {
       const categoryHeader = document.createElement('div');
       categoryHeader.className = 'event-dropdown__category';
       categoryHeader.textContent = this.formatCategoryName(category);
-      this.eventDropdown.appendChild(categoryHeader);
+      this.eventList.appendChild(categoryHeader);
 
       // Add events in this category
       for (const event of events) {
         const item = document.createElement('div');
         item.className = 'event-dropdown__item';
+
+        // Mark as selected if this is the current event
+        if (event.key === this.currentEvent) {
+          item.classList.add('event-dropdown__item--selected');
+        }
+
         item.textContent = event.displayName;
         item.dataset.eventKey = event.key;
 
@@ -268,7 +266,7 @@ export class BaseCalculator {
           this.selectEvent(event.key, event.displayName);
         });
 
-        this.eventDropdown.appendChild(item);
+        this.eventList.appendChild(item);
       }
     }
 
@@ -301,7 +299,7 @@ export class BaseCalculator {
       const otherHeader = document.createElement('div');
       otherHeader.className = 'event-dropdown__category';
       otherHeader.textContent = 'Other';
-      this.eventDropdown.appendChild(otherHeader);
+      this.eventList.appendChild(otherHeader);
 
       // Add all other events
       for (const category of otherSortedCategories) {
@@ -309,6 +307,12 @@ export class BaseCalculator {
         for (const event of events) {
           const item = document.createElement('div');
           item.className = 'event-dropdown__item';
+
+          // Mark as selected if this is the current event
+          if (event.key === this.currentEvent) {
+            item.classList.add('event-dropdown__item--selected');
+          }
+
           item.textContent = event.displayName;
           item.dataset.eventKey = event.key;
 
@@ -318,20 +322,25 @@ export class BaseCalculator {
             this.selectEvent(event.key, event.displayName);
           });
 
-          this.eventDropdown.appendChild(item);
+          this.eventList.appendChild(item);
         }
       }
     }
-
-    this.showEventDropdown();
   }
 
   showEventDropdown() {
+    // Clear search and render full list
+    this.eventSearch.value = '';
+    this.renderEventDropdown('');
     this.eventDropdown?.classList.remove('hidden');
+    // Auto-focus search field
+    setTimeout(() => this.eventSearch.focus(), 0);
   }
 
   hideEventDropdown() {
     this.eventDropdown?.classList.add('hidden');
+    // Clear search field
+    this.eventSearch.value = '';
   }
 
   handlePerformanceInput(e) {
