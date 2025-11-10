@@ -1,12 +1,13 @@
 # Agent Documentation
 
-This file provides guidance for AI coding agents (Claude, GitHub Copilot, etc.) working on the Athletics Utils project.
+This file provides guidance for AI coding agents (Claude, GitHub Copilot, etc.) working on the Athletics Utilities project.
 
 ## Project Overview
 
-**Athletics Utils** is a Progressive Web App (PWA) providing athletics (track & field) calculators. It's built with vanilla JavaScript, HTML, and CSS using Vite as the build tool.
+**Athletics Utilities** is a Progressive Web App (PWA) providing athletics (track & field) calculators. It's built with vanilla JavaScript, HTML, and CSS using Vite as the build tool.
 
 ### Key Technologies
+
 - **Vite** - Build tool with multi-page support
 - **Vanilla JavaScript (ES6+)** - No framework overhead
 - **CSS3** with CSS Variables for theming
@@ -18,6 +19,7 @@ This file provides guidance for AI coding agents (Claude, GitHub Copilot, etc.) 
 ### Important: Project Root Structure
 
 **The web application lives in the `web/` directory.** This is configured via `root: 'web'` in `vite.config.js`. When working with the project:
+
 - All web files (HTML, JS, CSS) are in `web/`
 - Vite serves from `web/` as the root
 - Build output goes to `dist/` at the repository root
@@ -26,6 +28,7 @@ This file provides guidance for AI coding agents (Claude, GitHub Copilot, etc.) 
 ### Multi-Page Architecture
 
 The project uses Vite's multi-page support with:
+
 - **Home Page** (`web/index.html`) - Landing page
 - **Calculator Pages** (`web/calculators/*.html`) - Individual tool pages
 - **Shared Components** - Reusable across pages
@@ -86,12 +89,14 @@ AthleticsUtils/
 ## Key Files and Their Purpose
 
 ### Configuration Files
+
 - **`vite.config.js`** - Vite configuration with multi-page setup (sets `root: 'web'`)
 - **`package.json`** - Dependencies and npm scripts
 - **`.gitignore`** - Git ignore patterns
 - **`.github/workflows/deploy.yml`** - GitHub Actions auto-deployment
 
 ### Entry Points
+
 - **`web/index.html`** - Home page (main entry)
 - **`web/calculators/score.html`** - Score calculator page entry
 - **`web/src/js/main.js`** - Main application entry point
@@ -99,6 +104,7 @@ AthleticsUtils/
 - **`web/src/js/pages/score-calculator.js`** - Score calculator JavaScript
 
 ### Core Components
+
 - **`web/src/js/components/navigation.js`** - Navigation bar (used on all pages)
 - **`web/src/js/components/calculator-base.js`** - Base class for calculators
 - **`web/src/js/data/scoring-data-loader.js`** - Loads scoring data with caching
@@ -106,12 +112,14 @@ AthleticsUtils/
 - **`web/src/js/utils/performance-parser.js`** - Parses user input (times/distances)
 
 ### Styling
+
 - **`web/src/styles/variables.css`** - CSS custom properties (modify for theming)
 - **`web/src/styles/main.css`** - Global styles
 - **`web/src/styles/components/`** - Component-specific styles
 - **`web/src/styles/pages/`** - Page-specific styles
 
 ### Data
+
 - **`web/public/data/athletics_scoring_tables.min.json`** - Minified scoring tables (~3MB)
 - **`web/public/data/events_config.json`** - Event metadata and configuration
 - **`tools/scoring-table-extractor/`** - Tool to extract data from official PDFs
@@ -119,17 +127,20 @@ AthleticsUtils/
 ## Development Workflow
 
 ### Starting Development
+
 ```bash
 npm run dev    # Start dev server at http://localhost:5173
 ```
 
 ### Building for Production
+
 ```bash
 npm run build   # Build to dist/
 npm run preview # Preview production build
 ```
 
 ### Deployment
+
 ```bash
 npm run deploy  # Build and deploy to GitHub Pages
 ```
@@ -137,6 +148,7 @@ npm run deploy  # Build and deploy to GitHub Pages
 ## Coding Conventions
 
 ### JavaScript
+
 - **ES6+ Module Syntax** - Use `import`/`export`
 - **Classes for Components** - Use class syntax for reusable components
 - **Async/Await** - Prefer over promises for readability
@@ -144,17 +156,20 @@ npm run deploy  # Build and deploy to GitHub Pages
 - **Comments** - Add JSDoc comments for public methods
 
 ### File Organization
+
 - **One Component Per File** - Each component in its own file
 - **Group by Feature** - Related files go in the same directory
 - **Index Files** - Avoid `index.js` files, use descriptive names
 
 ### CSS
+
 - **CSS Variables** - Define in `variables.css`, use throughout
 - **Component Scoping** - Prefix classes with component name (e.g., `.nav-*`)
 - **Mobile First** - Write mobile styles first, then desktop
 - **BEM-like Naming** - Use `.block__element--modifier` pattern
 
 ### HTML
+
 - **Semantic HTML** - Use appropriate semantic elements
 - **Accessibility** - Include ARIA labels where needed
 - **Progressive Enhancement** - Works without JavaScript for basic navigation
@@ -164,27 +179,29 @@ npm run deploy  # Build and deploy to GitHub Pages
 ### Adding a New Calculator
 
 1. **Create HTML page** in `web/calculators/`
+
    ```html
    <!-- web/calculators/new-calculator.html -->
    <!DOCTYPE html>
    <html lang="en">
-   <head>
-     <title>New Calculator - Athletics Utils</title>
-     <link rel="stylesheet" href="/src/styles/main.css">
-   </head>
-   <body>
-     <!-- Include navigation -->
-     <!-- Add your UI -->
-     <script type="module" src="/src/js/pages/new-calculator.js"></script>
-   </body>
+     <head>
+       <title>New Calculator - Athletics Utilities</title>
+       <link rel="stylesheet" href="/src/styles/main.css" />
+     </head>
+     <body>
+       <!-- Include navigation -->
+       <!-- Add your UI -->
+       <script type="module" src="/src/js/pages/new-calculator.js"></script>
+     </body>
    </html>
    ```
 
 2. **Create page script** in `web/src/js/pages/`
+
    ```javascript
    // web/src/js/pages/new-calculator.js
-   import { Navigation } from '../components/navigation.js';
-   import { BaseCalculator } from '../components/calculator-base.js';
+   import { Navigation } from "../components/navigation.js";
+   import { BaseCalculator } from "../components/calculator-base.js";
 
    class NewCalculator extends BaseCalculator {
      async initialize() {
@@ -202,16 +219,20 @@ npm run deploy  # Build and deploy to GitHub Pages
      }
    }
 
-   const calculator = new NewCalculator({ /* selectors */ });
+   const calculator = new NewCalculator({
+     /* selectors */
+   });
    calculator.initialize();
    ```
 
 3. **Update `vite.config.js`** - Add to `rollupOptions.input`:
+
    ```javascript
-   newCalculator: resolve(__dirname, 'web/calculators/new-calculator.html')
+   newCalculator: resolve(__dirname, "web/calculators/new-calculator.html");
    ```
 
 4. **Update navigation** - Add link in:
+
    - `web/index.html` (home page tools grid)
    - All HTML pages' navigation sections
 
@@ -233,7 +254,7 @@ class YourCalculator extends BaseCalculator {
   }
 
   async initialize() {
-    await super.initialize();  // Loads scoring data
+    await super.initialize(); // Loads scoring data
     // Your initialization code
   }
 
@@ -244,6 +265,7 @@ class YourCalculator extends BaseCalculator {
 ```
 
 `BaseCalculator` provides:
+
 - `this.scoringData` - Loaded scoring tables
 - `this.currentGender` - Selected gender
 - `this.currentEvent` - Selected event
@@ -274,14 +296,16 @@ When World Athletics releases new tables:
 4. **Page styles** → `web/src/styles/pages/page-name.css`
 
 Import in HTML:
+
 ```html
-<link rel="stylesheet" href="/src/styles/main.css">
-<link rel="stylesheet" href="/src/styles/pages/your-page.css">
+<link rel="stylesheet" href="/src/styles/main.css" />
+<link rel="stylesheet" href="/src/styles/pages/your-page.css" />
 ```
 
 ### Adding Utility Functions
 
 Create in `web/src/js/utils/`:
+
 ```javascript
 // web/src/js/utils/your-utility.js
 export function yourFunction() {
@@ -290,8 +314,9 @@ export function yourFunction() {
 ```
 
 Import where needed:
+
 ```javascript
-import { yourFunction } from '../utils/your-utility.js';
+import { yourFunction } from "../utils/your-utility.js";
 ```
 
 ## Data Management
@@ -299,6 +324,7 @@ import { yourFunction } from '../utils/your-utility.js';
 ### Scoring Data Format
 
 The scoring data is structured as:
+
 ```json
 {
   "men": {
@@ -318,8 +344,9 @@ The scoring data is structured as:
 ### Loading Data
 
 Use `ScoringDataLoader`:
+
 ```javascript
-import { ScoringDataLoader } from '../data/scoring-data-loader.js';
+import { ScoringDataLoader } from "../data/scoring-data-loader.js";
 
 const dataLoader = new ScoringDataLoader();
 const scoringData = await dataLoader.loadScoringData();
@@ -330,6 +357,7 @@ Data is cached in memory after first load.
 ### Event Configuration Data
 
 The event configuration provides metadata about athletics events:
+
 ```json
 {
   "primaryEvents": ["100m", "200m", ...],
@@ -347,8 +375,9 @@ The event configuration provides metadata about athletics events:
 ```
 
 Use `EventConfigLoader`:
+
 ```javascript
-import { EventConfigLoader } from '../data/event-config-loader.js';
+import { EventConfigLoader } from "../data/event-config-loader.js";
 
 const configLoader = new EventConfigLoader();
 const eventConfig = await configLoader.load();
@@ -359,8 +388,9 @@ Data is cached in memory after first load.
 ### Performance Parsing
 
 Use `PerformanceParser` for user input:
+
 ```javascript
-import { PerformanceParser } from '../utils/performance-parser.js';
+import { PerformanceParser } from "../utils/performance-parser.js";
 
 // Parse time input (e.g., "10.5" or "1:30.5")
 const seconds = PerformanceParser.parseTimeToSeconds("1:30.5");
@@ -393,6 +423,7 @@ When making changes, verify:
 ## Browser Support
 
 Target modern browsers with ES6+ support:
+
 - Chrome/Edge (latest 2 versions)
 - Firefox (latest 2 versions)
 - Safari (latest 2 versions)
@@ -462,6 +493,7 @@ npm run preview
 ## Questions or Issues?
 
 If you encounter issues or need clarification:
+
 1. Check existing code for similar patterns
 2. Review README.md and DEPLOYMENT.md
 3. Examine the working score calculator as a reference

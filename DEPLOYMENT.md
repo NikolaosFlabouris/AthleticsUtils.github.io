@@ -1,6 +1,6 @@
 # Deployment Guide
 
-This guide explains how to deploy the Athletics Utils website to GitHub Pages.
+This guide explains how to deploy the Athletics Utilities website to GitHub Pages.
 
 ## Prerequisites
 
@@ -19,6 +19,7 @@ npm run deploy
 ```
 
 This will:
+
 1. Build the project (`npm run build`)
 2. Deploy the `dist/` folder to the `gh-pages` branch
 3. GitHub Pages will automatically serve the site
@@ -28,11 +29,13 @@ This will:
 If you prefer manual control:
 
 1. Build the project:
+
 ```bash
 npm run build
 ```
 
 2. Deploy to gh-pages branch:
+
 ```bash
 npx gh-pages -d dist
 ```
@@ -53,11 +56,13 @@ npx gh-pages -d dist
 To use a custom domain:
 
 1. Add a `CNAME` file to the `public/` directory with your domain name:
+
 ```bash
 echo "yourdomain.com" > public/CNAME
 ```
 
 2. Configure DNS with your domain provider:
+
    - Add an A record pointing to GitHub's IP addresses:
      - 185.199.108.153
      - 185.199.109.153
@@ -125,7 +130,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   deploy:
@@ -136,7 +141,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Install dependencies
         run: npm ci

@@ -15,7 +15,8 @@ You can generate the PNG icons from the SVG using an online tool or image editor
 3. Export/save as PNG at 512x512 pixels (save as `icon-512.png`)
 
 Or use an online converter:
+
 - https://cloudconvert.com/svg-to-png
 - https://www.aconvert.com/image/svg-to-png/
 
-For production, consider creating custom icons that better represent your Athletics Utils brand.
+For production, consider creating custom icons that better represent your Athletics Utilities brand.

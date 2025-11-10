@@ -1,6 +1,6 @@
 # World Athletics Scoring Tables Extractor
 
-This tool extracts World Athletics scoring tables from PDF documents and converts them to JSON format for use in the Athletics Utils website.
+This tool extracts World Athletics scoring tables from PDF documents and converts them to JSON format for use in the Athletics Utilities website.
 
 ## Features
 
@@ -28,6 +28,7 @@ npm run publish
 ```
 
 This will:
+
 1. Extract data from `World_Athletics_Scoring_Tables_of_Athletics_2025.pdf`
 2. Generate `athletics_scoring_tables.json` (pretty-printed, 2.4MB)
 3. Generate `athletics_scoring_tables.min.json` (minified, 1.4MB)
@@ -42,6 +43,7 @@ npm start [input-pdf] [output-json]
 ```
 
 Examples:
+
 ```bash
 npm start scoring_tables.pdf output.json
 node index.js field_events.pdf field_events.json
@@ -72,6 +74,7 @@ npm run examples [json-file]
 The tool generates two files in the `tools/scoring-table-extractor/` directory:
 
 1. **`athletics_scoring_tables.json`** (2.4MB)
+
    - Pretty-printed format for human readability
    - Stays in the tool directory for development/debugging
    - Not used by the website
@@ -100,6 +103,7 @@ The extracted data is organized as:
 ```
 
 Example:
+
 ```json
 {
   "men": {
@@ -119,6 +123,7 @@ Example:
 The tool extracts data for all World Athletics events including:
 
 ### Track Events
+
 - Sprints: 100m, 200m, 400m
 - Middle Distance: 800m, 1500m, Mile
 - Long Distance: 3000m, 5000m, 10000m
@@ -127,13 +132,16 @@ The tool extracts data for all World Athletics events including:
 - Race Walks: 3000mW, 5000mW, 10000mW, 20000mW
 
 ### Field Events
+
 - Jumps: High Jump, Pole Vault, Long Jump, Triple Jump
 - Throws: Shot Put, Discus, Hammer, Javelin
 
 ### Combined Events
+
 - Decathlon, Heptathlon, Pentathlon
 
 ### Relays
+
 - 4x100m, 4x200m, 4x400m (including mixed variants)
 
 ## File Locations
@@ -153,21 +161,25 @@ public/data/
 ## Workflow
 
 1. **Update PDF** (when new scoring tables are released)
+
    - Download latest PDF from World Athletics
    - Place in `tools/scoring-table-extractor/` directory
    - Name it `World_Athletics_Scoring_Tables_of_Athletics_2025.pdf` or update the filename in package.json
 
 2. **Extract and Publish**
+
    ```bash
    npm run publish
    ```
 
 3. **Verify**
+
    ```bash
    npm run validate athletics_scoring_tables.json
    ```
 
 4. **Test Website**
+
    - Run `npm run dev` from project root
    - Navigate to Performance Calculator
    - Verify data loads correctly
@@ -192,12 +204,14 @@ Event definitions are in [events-config.js](events-config.js). To add new events
 ### Debugging
 
 The tool outputs extraction progress:
+
 - Section detection (gender, category)
 - Table header detection
 - Data row parsing
 - Summary statistics
 
 Check console output for warnings about:
+
 - Unknown events
 - Invalid data formats
 - Parsing errors

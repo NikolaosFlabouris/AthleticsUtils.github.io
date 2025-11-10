@@ -1,10 +1,10 @@
 # Claude Code Context
 
-This file provides context for Claude Code (Anthropic's official CLI) when working on the Athletics Utils project.
+This file provides context for Claude Code (Anthropic's official CLI) when working on the Athletics Utilities project.
 
 ## Project Overview
 
-**Athletics Utils** is a Progressive Web App (PWA) providing athletics (track & field) calculators. It's built with vanilla JavaScript, HTML, and CSS using Vite as the build tool.
+**Athletics Utilities** is a Progressive Web App (PWA) providing athletics (track & field) calculators. It's built with vanilla JavaScript, HTML, and CSS using Vite as the build tool.
 
 **Live Site**: https://athleticsutils.github.io/
 **Repository**: https://github.com/NikolaosFlabouris/AthleticsUtils.github.io
@@ -60,6 +60,7 @@ npm run deploy   # Build and deploy to GitHub Pages
 ### Vite Configuration
 
 The project uses **`root: 'web'`** in [vite.config.js](vite.config.js), meaning:
+
 - All web files are in the [`web/`](web/) directory
 - When referencing paths, remember they're relative to `web/`
 - Build output goes to [`dist/`](dist/) at repository root
@@ -74,6 +75,7 @@ The project uses **`root: 'web'`** in [vite.config.js](vite.config.js), meaning:
 ### Data Files
 
 1. **Scoring Tables** (`web/public/data/athletics_scoring_tables.min.json`)
+
    - Size: ~3MB (3,079,906 bytes)
    - Source: World Athletics official PDFs
    - Cached by service worker for offline use
@@ -85,14 +87,17 @@ The project uses **`root: 'web'`** in [vite.config.js](vite.config.js), meaning:
 ### Code Organization
 
 **Components** ([`web/src/js/components/`](web/src/js/components/)):
+
 - `navigation.js` - Shared navigation bar
 - `calculator-base.js` - Base calculator class (extend this)
 
 **Data Loaders** ([`web/src/js/data/`](web/src/js/data/)):
+
 - `scoring-data-loader.js` - Loads scoring tables with caching
 - `event-config-loader.js` - Loads event configuration
 
 **Utilities** ([`web/src/js/utils/`](web/src/js/utils/)):
+
 - `performance-parser.js` - Parse/format times and distances
 
 ## Development Workflow
@@ -106,9 +111,10 @@ The project uses **`root: 'web'`** in [vite.config.js](vite.config.js), meaning:
 5. **Test**: `npm run dev` and verify
 
 Example page script:
+
 ```javascript
-import { Navigation } from '../components/navigation.js';
-import { BaseCalculator } from '../components/calculator-base.js';
+import { Navigation } from "../components/navigation.js";
+import { BaseCalculator } from "../components/calculator-base.js";
 
 class YourCalculator extends BaseCalculator {
   async initialize() {
@@ -122,7 +128,9 @@ class YourCalculator extends BaseCalculator {
   }
 }
 
-const calculator = new YourCalculator({ /* config */ });
+const calculator = new YourCalculator({
+  /* config */
+});
 calculator.initialize();
 ```
 
@@ -145,18 +153,21 @@ The tool automatically publishes to `web/public/data/athletics_scoring_tables.mi
 ## Code Conventions
 
 ### JavaScript
+
 - ES6+ modules (`import`/`export`)
 - Classes for components
 - Async/await for asynchronous code
 - JSDoc comments for public methods
 
 ### CSS
+
 - CSS Variables in [`web/src/styles/variables.css`](web/src/styles/variables.css)
 - Component scoping (e.g., `.nav-*` for navigation)
 - Mobile-first responsive design
 - BEM-like naming (`.block__element--modifier`)
 
 ### File Organization
+
 - One component per file
 - Descriptive file names (no `index.js`)
 - Group related files together
@@ -164,12 +175,14 @@ The tool automatically publishes to `web/public/data/athletics_scoring_tables.mi
 ## Deployment
 
 ### GitHub Pages
+
 - Site deploys to: https://athleticsutils.github.io/
 - Base path: `/AthleticsUtils/` (configured in [vite.config.js](vite.config.js))
 - Deployment: `npm run deploy` (builds and pushes to `gh-pages` branch)
 - Auto-deploy via GitHub Actions on push to `main`
 
 ### Build Output
+
 - Location: [`dist/`](dist/)
 - Multi-page structure preserved
 - Assets in `dist/assets/`
@@ -178,6 +191,7 @@ The tool automatically publishes to `web/public/data/athletics_scoring_tables.mi
 ## Browser Support
 
 Modern browsers with ES6+ support:
+
 - Chrome/Edge (latest 2 versions)
 - Firefox (latest 2 versions)
 - Safari (latest 2 versions)
@@ -185,6 +199,7 @@ Modern browsers with ES6+ support:
 ## Important Constraints
 
 ### DO NOT:
+
 - Modify `web/public/data/athletics_scoring_tables.min.json` manually
   - Regenerate using the extraction tool
 - Add frameworks or libraries
@@ -193,6 +208,7 @@ Modern browsers with ES6+ support:
   - Pages won't build without being listed
 
 ### DO:
+
 - Extend `BaseCalculator` for new calculators
 - Use CSS variables for theming
 - Test with `npm run dev` before committing

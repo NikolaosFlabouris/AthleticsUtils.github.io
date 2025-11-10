@@ -11,7 +11,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icons/*.png', 'data/*.json'],
       manifest: {
-        name: 'Athletics Utils',
+        name: 'Athletics Utilities',
         short_name: 'AthleticsUtils',
         description: 'Athletics utilities and calculators for performance lookup and analysis',
         theme_color: '#1a73e8',

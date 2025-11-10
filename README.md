@@ -1,10 +1,11 @@
-# Athletics Utils
+# Athletics Utilities
 
 A modern, lightweight Progressive Web App (PWA) providing athletics (track & field) calculators and utilities. Built with vanilla JavaScript, HTML, and CSS for maximum performance and minimal bundle size.
 
 ## Features
 
 ### World Athletics Score Calculator
+
 Also known as: IAAF Points Calculator, World Athletics Points Calculator, IAAF Score Calculator
 
 - **Performance Lookup**: Enter an athletic performance to find its point value using official World Athletics scoring tables
@@ -21,6 +22,7 @@ Also known as: IAAF Points Calculator, World Athletics Points Calculator, IAAF S
   - Relays (4x100m, 4x200m, 4x400m, including mixed)
 
 ### Progressive Web App
+
 - **Offline Support**: Works completely offline once loaded
 - **Installable**: Add to your home screen on mobile devices or desktop
 - **Fast Loading**: Optimized for performance with minimal bundle size
@@ -87,10 +89,12 @@ This project uses a **multi-page architecture** with Vite's multi-page support:
 ### Key Components
 
 1. **Navigation Component** ([src/js/components/navigation.js](src/js/components/navigation.js))
+
    - Shared navigation bar across all pages
    - Highlights active page
 
 2. **Base Calculator** ([src/js/components/calculator-base.js](src/js/components/calculator-base.js))
+
    - Shared calculator functionality (gender/event selection, data loading)
    - Extended by specific calculator pages
 
@@ -101,18 +105,21 @@ This project uses a **multi-page architecture** with Vite's multi-page support:
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js 14.0.0 or higher
 - npm (comes with Node.js)
 
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/NikolaosFlabouris/AthleticsUtils.github.io.git
 cd AthleticsUtils.github.io
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
@@ -120,6 +127,7 @@ npm install
 ### Development
 
 Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -129,6 +137,7 @@ This will start Vite's dev server at `http://localhost:5173` with hot module rep
 ### Building for Production
 
 Build the project:
+
 ```bash
 npm run build
 ```
@@ -136,6 +145,7 @@ npm run build
 The optimized files will be in the `dist/` directory.
 
 Preview the production build:
+
 ```bash
 npm run preview
 ```
@@ -145,6 +155,7 @@ npm run preview
 The site is designed to be deployed to GitHub Pages. The build command creates optimized static files that can be served from any static hosting service.
 
 To deploy to GitHub Pages:
+
 ```bash
 npm run deploy
 ```
@@ -170,10 +181,12 @@ The scoring tables are based on the **World Athletics Scoring Tables of Athletic
 When new scoring tables are released by World Athletics:
 
 1. **Download the PDF**
+
    - Place in `tools/scoring-table-extractor/` directory
    - Name it `World_Athletics_Scoring_Tables_of_Athletics_2025.pdf` (or update package.json)
 
 2. **Extract and Publish**
+
    ```bash
    cd tools/scoring-table-extractor
    npm install  # First time only
@@ -181,6 +194,7 @@ When new scoring tables are released by World Athletics:
    ```
 
 3. **Verify**
+
    ```bash
    npm run validate athletics_scoring_tables.json
    ```
@@ -193,6 +207,7 @@ When new scoring tables are released by World Athletics:
    Navigate to the Performance Calculator and verify data loads correctly.
 
 The extraction tool automatically:
+
 - Parses the PDF and extracts all scoring data
 - Generates a minified JSON file (1.4MB)
 - **Publishes it to `public/data/athletics_scoring_tables.min.json`** for the website to use
@@ -206,29 +221,31 @@ The multi-page architecture makes it easy to add new calculator tools. Follow th
 ### 1. Create a new HTML page
 
 Create `calculators/your-tool.html` based on the [score.html](calculators/score.html) template:
+
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <!-- Update title and description -->
-  <title>Your Tool - Athletics Utils</title>
-  <!-- Include main.css and any page-specific CSS -->
-</head>
-<body>
-  <!-- Include navigation with correct active link -->
-  <!-- Add your tool's UI -->
-  <!-- Link to your page script -->
-  <script type="module" src="/src/js/pages/your-tool.js"></script>
-</body>
+  <head>
+    <!-- Update title and description -->
+    <title>Your Tool - Athletics Utilities</title>
+    <!-- Include main.css and any page-specific CSS -->
+  </head>
+  <body>
+    <!-- Include navigation with correct active link -->
+    <!-- Add your tool's UI -->
+    <!-- Link to your page script -->
+    <script type="module" src="/src/js/pages/your-tool.js"></script>
+  </body>
 </html>
 ```
 
 ### 2. Create page logic
 
 Create `src/js/pages/your-tool.js`:
+
 ```javascript
-import { Navigation } from '../components/navigation.js';
-import { BaseCalculator } from '../components/calculator-base.js';
+import { Navigation } from "../components/navigation.js";
+import { BaseCalculator } from "../components/calculator-base.js";
 
 class YourTool extends BaseCalculator {
   async initialize() {
@@ -241,13 +258,16 @@ class YourTool extends BaseCalculator {
   }
 }
 
-const calculator = new YourTool({ /* selectors */ });
+const calculator = new YourTool({
+  /* selectors */
+});
 calculator.initialize();
 ```
 
 ### 3. Update Vite config
 
 Add your page to `vite.config.js`:
+
 ```javascript
 rollupOptions: {
   input: {
@@ -261,6 +281,7 @@ rollupOptions: {
 ### 4. Update navigation
 
 Add a link to your tool in:
+
 - [index.html](index.html) (home page tools grid)
 - Navigation component in all pages
 
@@ -273,7 +294,8 @@ npm run build  # Build for production
 
 ## Future Tools
 
-Planned additions to the Athletics Utils suite:
+Planned additions to the Athletics Utilities suite:
+
 - Pace calculators
 - Training zone calculators
 - Meet scoring tools
@@ -282,6 +304,7 @@ Planned additions to the Athletics Utils suite:
 ## Browser Support
 
 Targets modern browsers with ES6+ support:
+
 - Chrome/Edge (latest 2 versions)
 - Firefox (latest 2 versions)
 - Safari (latest 2 versions)
