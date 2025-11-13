@@ -27,6 +27,7 @@
         <li><a href="/" class="navigation__link">Home</a></li>
         <li><a href="/calculators/score.html" class="navigation__link navigation__link--active">Score Calculator</a></li>
         <li><a href="/calculators/pace.html" class="navigation__link">Pace Calculator</a></li>
+        <li><a href="/calculators/combined-events.html" class="navigation__link">Combined Events</a></li>
       </ul>
     </div>
   </nav>
@@ -196,13 +197,18 @@
         <h3 style="margin-top: 2rem;">About World Athletics Points</h3>
         <p>
           This calculator uses the official <strong>World Athletics Scoring Tables</strong> (formerly IAAF scoring tables)
-          to calculate points for track and field performances. The scoring system is used worldwide for:
+          to calculate points for track and field performances. Notes about the World Athletics Scoring tables:
         </p>
         <ul>
-          <li>Combined events (decathlon, heptathlon, pentathlon)</li>
-          <li>Comparing performances across different athletics disciplines</li>
-          <li>Age-graded performance evaluation</li>
-          <li>Competition scoring and rankings</li>
+          <li>The Scoring Tables include all standard track and Short Track (formally referred to as indoor) events. The Short Track equivalent events are labelled as such to differentiate them from their outdoor counterparts.</li>
+          <li>Track events are typically measured in meters (m) and measured to the hundredth of a second. Road events are typically measured in kilometers (km) and measured to the second. The 1 Mile event is the one outlier and has the exact same scoring table for Track and Road performances.</li>
+          <li>All scoring tables are for the Open age group, this includes the Open aged event specifications (implement weight, hurdle height, or steeple height). Using the Scoring Tables to measure performances that use a different specification can lead to inaccurate results and comparisons.</li>
+          <li>Hand timed performances can be used for Score conversation, however additional time must be added for the following events:
+            <ul>
+              <li>Sprint and Hurdle events up to and including 200m: add 0.24 seconds</li>
+              <li>300m, 400m and 400m Hurdles: add 0.14 seconds</li>
+            </ul>
+          </li>
         </ul>
         <p>
           <strong>Also known as:</strong> IAAF Points Calculator, World Athletics Points Calculator,

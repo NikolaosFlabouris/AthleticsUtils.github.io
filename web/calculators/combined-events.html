@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Combined Event Score Calculator - Calculate scores for Decathlon, Heptathlon, and Pentathlon using official World Athletics scoring tables.">
+  <meta name="keywords" content="decathlon calculator, heptathlon calculator, pentathlon calculator, combined events, World Athletics, IAAF points, athletics scoring">
+  <meta name="theme-color" content="#1a73e8">
+  <title>Combined Event Score Calculator | Athletics Utilities</title>
+  <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="stylesheet" href="../src/styles/main.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header__brand">
+        <h1 class="header__title">Athletics Utilities</h1>
+        <p class="header__subtitle">Combined Event Score Calculator</p>
+      </div>
+    </div>
+  </header>
+
+  <nav class="navigation">
+    <div class="container">
+      <ul class="navigation__list">
+        <li><a href="/" class="navigation__link">Home</a></li>
+        <li><a href="/calculators/score.html" class="navigation__link">Score Calculator</a></li>
+        <li><a href="/calculators/pace.html" class="navigation__link">Pace Calculator</a></li>
+        <li><a href="/calculators/combined-events.html" class="navigation__link navigation__link--active">Combined Events</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="container">
+      <section class="calculator">
+        <div class="calculator__header">
+          <h2>Combined Event Score Calculator</h2>
+          <p class="calculator__description">
+            Calculate total scores for combined events (Decathlon, Heptathlon, Pentathlon) using official World Athletics scoring tables.
+          </p>
+          <p class="calculator__description" style="color: #f57c00; font-weight: 500; margin-top: 1rem;">
+            🚧 Coming Soon! This calculator is currently under development.
+          </p>
+        </div>
+
+        <div class="calculator__controls">
+          <!-- TODO: Add event selection (Decathlon, Heptathlon, Pentathlon) -->
+          <!-- TODO: Add gender selection (Men's/Women's) -->
+          <!-- TODO: Add performance input fields for each discipline -->
+          <!-- TODO: Add calculate button -->
+
+          <div class="form-group">
+            <p style="text-align: center; padding: 2rem; color: #666;">
+              Placeholder for calculator controls. This will include event selection, discipline inputs, and calculation options.
+            </p>
+          </div>
+        </div>
+
+        <div id="results-container" class="calculator__results hidden">
+          <div class="results-header">
+            <h3>Results</h3>
+          </div>
+          <div id="results-content" class="results-content">
+            <!-- TODO: Display individual discipline scores and total score -->
+          </div>
+        </div>
+
+        <div id="loading-indicator" class="loading hidden">
+          <div class="loading__spinner"></div>
+          <p>Loading...</p>
+        </div>
+
+        <div id="error-message" class="error-message hidden">
+          <!-- Error messages will appear here -->
+        </div>
+      </section>
+
+      <section class="info-section">
+        <h3>About Combined Events</h3>
+        <p>
+          Combined events are athletics competitions that consist of multiple track and field disciplines.
+          Athletes earn points based on their performance in each event, with the winner being determined by
+          the highest total score.
+        </p>
+
+        <h4>Event Types</h4>
+        <ul>
+          <li><strong>Decathlon (Men):</strong> 10 events over two days - 100m, Long Jump, Shot Put, High Jump, 400m, 110m Hurdles, Discus, Pole Vault, Javelin, 1500m</li>
+          <li><strong>Heptathlon (Women):</strong> 7 events over two days - 100m Hurdles, High Jump, Shot Put, 200m, Long Jump, Javelin, 800m</li>
+          <li><strong>Pentathlon (Indoor):</strong> 5 events - Men: 60m Hurdles, Long Jump, Shot Put, High Jump, 1000m; Women: 60m Hurdles, High Jump, Shot Put, Long Jump, 800m</li>
+        </ul>
+
+        <h4>Scoring System</h4>
+        <p>
+          Each discipline uses World Athletics' official scoring tables to convert performances into points.
+          The tables are designed to balance the scoring across different event types (running, jumping, throwing).
+        </p>
+
+        <!-- TODO: Add usage instructions when calculator is implemented -->
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+  </footer>
+
+  <script type="module" src="../src/js/pages/combined-events-calculator.js"></script>
+</body>
+</html>

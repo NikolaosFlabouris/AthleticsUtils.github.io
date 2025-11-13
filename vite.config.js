@@ -76,7 +76,8 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'web/index.html'),
         score: resolve(__dirname, 'web/calculators/score.html'),
-        pace: resolve(__dirname, 'web/calculators/pace.html')
+        pace: resolve(__dirname, 'web/calculators/pace.html'),
+        combinedEvents: resolve(__dirname, 'web/calculators/combined-events.html')
       }
     }
   }
