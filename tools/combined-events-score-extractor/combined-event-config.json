@@ -1,184 +1,327 @@
 {
   "men": {
     "combined": {
+      "decathlon": {
+        "displayName": "Decathlon",
+        "ageGroups": ["U18", "U20, Open"],
+        "events": [
+          ["100m", "lj", "sp", "hj", "400m"],
+          ["110mh", "dt", "pv", "jt", "1500m"]
+        ]
+      },
+      "heptathlon sh": {
+        "displayName": "Heptathlon (Short Track)",
+        "ageGroups": ["U18", "U20, Open"],
+        "events": [
+          ["60m", "lj", "sp", "hj"],
+          ["60mh", "pv", "1000m"]
+        ]
+      },
       "pentathlon": {
+        "displayName": "Pentathlon",
         "ageGroups": ["U18", "U20, Open"],
         "events": [["lj", "jt", "200m", "dt", "1500m"]]
       },
       "pentathlon sh": {
+        "displayName": "Pentathlon (Short Track)",
         "ageGroups": ["U18", "U20, Open"],
-        "events": [["60mH", "lj", "sp", "hj", "1000m"]]
-      },
-      "heptathlon sh": {
-        "ageGroups": ["U18", "U20, Open"],
-        "events": [
-          ["60m", "lj", "sp", "hj"],
-          ["60mH", "pv", "1000m"]
-        ]
-      },
-      "decathlon": {
-        "ageGroups": ["U18", "U20, Open"],
-        "events": [
-          ["100m", "lj", "sp", "hj", "400m"],
-          ["110mH", "dt", "pv", "jt", "1500m"]
-        ]
+        "events": [["60mh", "lj", "sp", "hj", "1000m"]]
       }
     },
-    "parameters": {
+    "events": {
       "60m": {
-        "a": 58.015,
-        "b": 11.5,
-        "c": 1.81
+        "displayName": "60m",
+        "measurement": "time",
+        "parameters": {
+          "a": 58.015,
+          "b": 11.5,
+          "c": 1.81
+        }
       },
-      "60mH": {
-        "a": 20.5173,
-        "b": 15.5,
-        "c": 1.92
+      "60mh": {
+        "displayName": "60m Hurdles",
+        "measurement": "time",
+        "parameters": {
+          "a": 20.5173,
+          "b": 15.5,
+          "c": 1.92
+        }
       },
       "100m": {
-        "a": 25.4347,
-        "b": 18.0,
-        "c": 1.81
+        "displayName": "100m",
+        "measurement": "time",
+        "parameters": {
+          "a": 25.4347,
+          "b": 18.0,
+          "c": 1.81
+        }
       },
-      "110mH": {
-        "a": 5.76352,
-        "b": 28.5,
-        "c": 1.92
+      "110mh": {
+        "displayName": "110m Hurdles",
+        "measurement": "time",
+        "parameters": {
+          "a": 5.76352,
+          "b": 28.5,
+          "c": 1.92
+        }
       },
       "200m": {
-        "a": 5.8425,
-        "b": 38.0,
-        "c": 1.81
+        "displayName": "200m",
+        "measurement": "time",
+        "parameters": {
+          "a": 5.8425,
+          "b": 38.0,
+          "c": 1.81
+        }
       },
       "400m": {
-        "a": 1.53775,
-        "b": 82.0,
-        "c": 1.81
+        "displayName": "400m",
+        "measurement": "time",
+        "parameters": {
+          "a": 1.53775,
+          "b": 82.0,
+          "c": 1.81
+        }
       },
       "1000m": {
-        "a": 0.08713,
-        "b": 305.5,
-        "c": 1.85
+        "displayName": "1000m",
+        "measurement": "time",
+        "parameters": {
+          "a": 0.08713,
+          "b": 305.5,
+          "c": 1.85
+        }
       },
       "1500m": {
-        "a": 0.03768,
-        "b": 480.0,
-        "c": 1.85
+        "displayName": "1500m",
+        "measurement": "time",
+        "parameters": {
+          "a": 0.03768,
+          "b": 480.0,
+          "c": 1.85
+        }
       },
       "hj": {
-        "a": 0.8465,
-        "b": 75.0,
-        "c": 1.42
+        "displayName": "High Jump",
+        "measurement": "height",
+        "parameters": {
+          "a": 0.8465,
+          "b": 75.0,
+          "c": 1.42
+        }
       },
       "pv": {
-        "a": 0.2797,
-        "b": 100.0,
-        "c": 1.35
+        "displayName": "Pole Vault",
+        "measurement": "height",
+        "parameters": {
+          "a": 0.2797,
+          "b": 100.0,
+          "c": 1.35
+        }
       },
       "lj": {
-        "a": 0.14354,
-        "b": 220.0,
-        "c": 1.4
+        "displayName": "Long Jump",
+        "measurement": "distance",
+        "parameters": {
+          "a": 0.14354,
+          "b": 220.0,
+          "c": 1.4
+        }
       },
       "sp": {
-        "a": 51.39,
-        "b": 1.5,
-        "c": 1.05
+        "displayName": "Shot Put",
+        "measurement": "distance",
+        "parameters": {
+          "a": 51.39,
+          "b": 1.5,
+          "c": 1.05
+        }
       },
       "dt": {
-        "a": 12.91,
-        "b": 4.0,
-        "c": 1.1
+        "displayName": "Discus Throw",
+        "measurement": "distance",
+        "parameters": {
+          "a": 12.91,
+          "b": 4.0,
+          "c": 1.1
+        }
       },
       "jt": {
-        "a": 10.14,
-        "b": 7.0,
-        "c": 1.08
+        "displayName": "Javelin Throw",
+        "measurement": "distance",
+        "parameters": {
+          "a": 10.14,
+          "b": 7.0,
+          "c": 1.08
+        }
       }
     }
   },
   "women": {
     "combined": {
-      "pentathlon sh": {
-        "ageGroups": ["U18", "U20, Open"],
-        "events": [["60mH", "ht", "sp", "lj", "800m"]]
-      },
       "heptathlon": {
+        "displayName": "Heptathlon",
         "ageGroups": ["U18", "U20", "Open"],
         "events": [
-          ["100mH", "hj", "sp", "200m"],
+          ["100mh", "hj", "sp", "200m"],
           ["lj", "jt", "800m"]
         ]
       },
+      "pentathlon sh": {
+        "displayName": "Pentathlon (Short Track)",
+        "ageGroups": ["U18", "U20, Open"],
+        "events": [["60mh", "hj", "sp", "lj", "800m"]]
+      },
       "decathlon": {
+        "displayName": "Decathlon",
         "ageGroups": ["U20, Open"],
         "events": [
           ["100m", "dt", "pv", "jt", "400m"],
-          ["100mH", "lj", "sp", "hj", "1500m"]
+          ["100mh", "lj", "sp", "hj", "1500m"]
         ]
       }
     },
-    "parameters": {
+    "events": {
       "60mh": {
-        "a": 20.0479,
-        "b": 17.0,
-        "c": 1.835
+        "displayName": "60m Hurdles",
+        "measurement": "time",
+        "parameters": {
+          "a": 20.0479,
+          "b": 17.0,
+          "c": 1.835
+        }
       },
       "100m": {
-        "a": 17.857,
-        "b": 21.0,
-        "c": 1.81
+        "displayName": "100m",
+        "measurement": "time",
+        "parameters": {
+          "a": 17.857,
+          "b": 21.0,
+          "c": 1.81
+        }
       },
-      "100mH": {
-        "a": 9.23076,
-        "b": 26.7,
-        "c": 1.835
+      "100mh": {
+        "displayName": "100m Hurdles",
+        "measurement": "time",
+        "parameters": {
+          "a": 9.23076,
+          "b": 26.7,
+          "c": 1.835
+        }
       },
       "200m": {
-        "a": 4.99087,
-        "b": 42.5,
-        "c": 1.81
+        "displayName": "200m",
+        "measurement": "time",
+        "parameters": {
+          "a": 4.99087,
+          "b": 42.5,
+          "c": 1.81
+        }
       },
       "400m": {
-        "a": 1.34285,
-        "b": 91.7,
-        "c": 1.81
+        "displayName": "400m",
+        "measurement": "time",
+        "parameters": {
+          "a": 1.34285,
+          "b": 91.7,
+          "c": 1.81
+        }
       },
       "800m": {
-        "a": 0.11193,
-        "b": 254.0,
-        "c": 1.88
+        "displayName": "800m",
+        "measurement": "time",
+        "parameters": {
+          "a": 0.11193,
+          "b": 254.0,
+          "c": 1.88
+        }
       },
       "1500m": {
-        "a": 0.02883,
-        "b": 535.0,
-        "c": 1.88
+        "displayName": "1500m",
+        "measurement": "time",
+        "parameters": {
+          "a": 0.02883,
+          "b": 535.0,
+          "c": 1.88
+        }
       },
       "hj": {
-        "a": 1.84523,
-        "b": 75.0,
-        "c": 1.348
+        "displayName": "High Jump",
+        "measurement": "height",
+        "parameters": {
+          "a": 1.84523,
+          "b": 75.0,
+          "c": 1.348
+        }
       },
       "pv": {
-        "a": 0.44125,
-        "b": 100.0,
-        "c": 1.35
+        "displayName": "Pole Vault",
+        "measurement": "height",
+        "parameters": {
+          "a": 0.44125,
+          "b": 100.0,
+          "c": 1.35
+        }
       },
       "lj": {
-        "a": 0.188807,
-        "b": 210.0,
-        "c": 1.41
+        "displayName": "Long Jump",
+        "measurement": "distance",
+        "parameters": {
+          "a": 0.188807,
+          "b": 210.0,
+          "c": 1.41
+        }
       },
       "sp": {
-        "a": 56.0211,
-        "b": 1.5,
-        "c": 1.05
+        "displayName": "Shot Put",
+        "measurement": "distance",
+        "parameters": {
+          "a": 56.0211,
+          "b": 1.5,
+          "c": 1.05
+        }
       },
       "dt": {
-        "a": 12.3311,
-        "b": 3.0,
-        "c": 1.1
+        "displayName": "Discus Throw",
+        "measurement": "distance",
+        "parameters": {
+          "a": 12.3311,
+          "b": 3.0,
+          "c": 1.1
+        }
+      },
+      "jt": {
+        "displayName": "Javelin Throw",
+        "measurement": "distance",
+        "parameters": {
+          "a": 15.9803,
+          "b": 3.8,
+          "c": 1.04
+        }
       }
     }
-  }
+  },
+  "handTimingOffsets": [
+    {
+      "offset": 0.24,
+      "events": [
+        "50m",
+        "50m h",
+        "55m",
+        "55m h",
+        "60m",
+        "60m h",
+        "100m",
+        "100m h",
+        "110m h",
+        "200m",
+        "200m sh",
+        "200m h"
+      ]
+    },
+    {
+      "offset": 0.14,
+      "events": ["300m", "300m h", "300 sh", "400m", "400m h", "400m sh"]
+    }
+  ]
 }

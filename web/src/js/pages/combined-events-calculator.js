@@ -1,28 +1,48 @@
 /**
  * Combined Event Score Calculator Page Controller
  * Handles UI interactions and calculations for combined events (Decathlon, Heptathlon, Pentathlon)
- *
- * TODO: This is a placeholder implementation. Full functionality to be added.
  */
 
 import { Navigation } from '../components/navigation.js';
-// TODO: Import BaseCalculator or create CombinedEventsCalculatorBase
-// import { BaseCalculator } from '../components/calculator-base.js';
+import { combinedEventsConfigLoader } from '../data/combined-events-config-loader.js';
+import {
+  calculateEventScore,
+  applyHandTimingOffset,
+  validatePerformance,
+  convertPerformanceToValue
+} from '../utils/combined-events-scorer.js';
 
 /**
  * Combined Events Calculator
- * TODO: Extend appropriate base class when implementing
  */
 class CombinedEventsCalculator {
   constructor() {
-    // TODO: Configure DOM element selectors
-    this.loadingIndicator = document.getElementById('loading-indicator');
-    this.errorMessage = document.getElementById('error-message');
-    this.resultsContainer = document.getElementById('results-container');
-    this.resultsContent = document.getElementById('results-content');
+    // State
+    this.currentGender = 'men';
+    this.currentCombinedEvent = null;
+    this.performances = {}; // { eventKey: { value, isHandTimed, score, inputValue } }
+    this.totalScore = 0;
+    this.completedCount = 0;
+    this.eventConfig = null;
 
-    // TODO: Add storage key for calculation history
-    // this.historyStorageKey = 'athleticsUtils.combinedEventsHistory';
+    // Debounce timer
+    this.debounceTimers = {};
+
+    // DOM elements (will be initialized)
+    this.genderSelect = null;
+    this.combinedEventSelect = null;
+    this.clearAllBtn = null;
+    this.calculatorForm = null;
+    this.progressIndicator = null;
+    this.progressText = null;
+    this.daysContainer = null;
+    this.runningTotals = null;
+    this.runningTotalsContent = null;
+    this.resultsContainer = null;
+    this.finalScore = null;
+    this.eventScoresSummary = null;
+    this.loadingIndicator = null;
+    this.errorMessage = null;
   }
 
   /**
@@ -30,105 +50,601 @@ class CombinedEventsCalculator {
    */
   async initialize() {
     try {
-      // Initialize navigation
       Navigation.initialize();
 
-      // TODO: Load World Athletics scoring data
-      // await this.loadScoringData();
+      this.showLoading();
 
-      // TODO: Initialize DOM elements
-      // this.initializeElements();
+      // Load combined events config
+      await combinedEventsConfigLoader.loadConfig();
 
-      // TODO: Setup event listeners
-      // this.setupEventListeners();
+      // Initialize DOM elements
+      this.initializeElements();
 
-      // TODO: Load history if applicable
-      // this.loadHistory();
+      // Setup event listeners
+      this.setupEventListeners();
 
-      console.log('Combined Events Calculator initialized (placeholder)');
+      // Populate combined event selector with default gender
+      await this.populateCombinedEventSelector(this.currentGender);
+
+      this.hideLoading();
     } catch (error) {
       console.error('Error initializing calculator:', error);
       this.showError('Failed to initialize calculator. Please refresh the page.');
+      this.hideLoading();
     }
   }
 
   /**
    * Initialize DOM elements
-   * TODO: Implement when adding UI controls
    */
   initializeElements() {
-    // TODO: Get references to form elements:
-    // - Event type selector (Decathlon, Heptathlon, Pentathlon)
-    // - Gender selector (Men's/Women's)
-    // - Performance input fields for each discipline
-    // - Calculate button
-    // - Clear/Reset button
+    this.genderSelect = document.getElementById('gender-select');
+    this.combinedEventSelect = document.getElementById('combined-event-select');
+    this.clearAllBtn = document.getElementById('clear-all-btn');
+    this.calculatorForm = document.getElementById('calculator-form');
+    this.progressIndicator = document.getElementById('progress-indicator');
+    this.progressText = document.getElementById('progress-text');
+    this.daysContainer = document.getElementById('days-container');
+    this.runningTotals = document.getElementById('running-totals');
+    this.runningTotalsContent = document.getElementById('running-totals-content');
+    this.resultsContainer = document.getElementById('results-container');
+    this.finalScore = document.getElementById('final-score');
+    this.eventScoresSummary = document.getElementById('event-scores-summary');
+    this.loadingIndicator = document.getElementById('loading-indicator');
+    this.errorMessage = document.getElementById('error-message');
   }
 
   /**
    * Setup event listeners
-   * TODO: Implement when adding UI controls
    */
   setupEventListeners() {
-    // TODO: Add listeners for:
-    // - Event type change (update discipline fields)
-    // - Gender change (update discipline fields)
-    // - Performance input changes (validate inputs)
-    // - Calculate button click
-    // - Clear/Reset button click
+    // Gender selection change
+    this.genderSelect?.addEventListener('change', () => this.handleGenderChange());
+
+    // Combined event selection change
+    this.combinedEventSelect?.addEventListener('change', () => this.handleCombinedEventChange());
+
+    // Clear all button
+    this.clearAllBtn?.addEventListener('click', () => this.handleClearAll());
   }
 
   /**
-   * Handle event type selection
-   * TODO: Implement discipline field generation based on event type
+   * Populate combined event selector based on gender
    */
-  handleEventTypeChange(eventType) {
-    // TODO: Update UI to show appropriate disciplines for selected event
-    // - Decathlon (Men): 10 events
-    // - Heptathlon (Women): 7 events
-    // - Pentathlon: 5 events
+  async populateCombinedEventSelector(gender) {
+    try {
+      const combinedEvents = await combinedEventsConfigLoader.getCombinedEvents(gender);
+
+      // Clear existing options
+      this.combinedEventSelect.innerHTML = '';
+
+      const entries = Object.entries(combinedEvents);
+
+      // Add options for each combined event
+      entries.forEach(([key, event], index) => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = event.displayName;
+        if (index === 0) {
+          option.selected = true;
+        }
+        this.combinedEventSelect.appendChild(option);
+      });
+
+      // Trigger change event to load the first event automatically
+      if (entries.length > 0) {
+        await this.handleCombinedEventChange();
+      }
+    } catch (error) {
+      console.error('Error populating combined event selector:', error);
+      this.showError('Failed to load combined events.');
+    }
   }
 
   /**
-   * Calculate combined event score
-   * TODO: Implement score calculation logic
+   * Handle gender selection change
    */
-  async calculateScore() {
-    // TODO:
-    // 1. Validate all discipline inputs
-    // 2. Look up individual scores from World Athletics tables
-    // 3. Calculate total score
-    // 4. Display results (individual + total)
-    // 5. Save to history
+  async handleGenderChange() {
+    this.currentGender = this.genderSelect.value;
+
+    // Reset selection and form
+    this.combinedEventSelect.value = '';
+    this.currentCombinedEvent = null;
+    this.hideForm();
+    this.hideResults();
+
+    // Repopulate combined event selector
+    await this.populateCombinedEventSelector(this.currentGender);
   }
 
   /**
-   * Display calculation results
-   * TODO: Implement result display
+   * Handle combined event selection change
    */
-  displayResults(results) {
-    // TODO: Show:
-    // - Total score (prominent display)
-    // - Individual discipline scores in a table
-    // - Any rankings or comparisons if applicable
+  async handleCombinedEventChange() {
+    const selectedEvent = this.combinedEventSelect.value;
+
+    if (!selectedEvent) {
+      this.hideForm();
+      this.hideResults();
+      this.clearAllBtn.classList.add('hidden');
+      return;
+    }
+
+    this.currentCombinedEvent = selectedEvent;
+
+    // Reset performances
+    this.performances = {};
+    this.totalScore = 0;
+    this.completedCount = 0;
+
+    // Load event configuration
+    this.eventConfig = await combinedEventsConfigLoader.getCombinedEvent(
+      this.currentGender,
+      this.currentCombinedEvent
+    );
+
+    // Generate event input fields
+    await this.generateEventInputs();
+
+    // Show form and clear button
+    this.calculatorForm.classList.remove('hidden');
+    this.clearAllBtn.classList.remove('hidden');
+    this.resultsContainer.classList.remove('hidden');
+
+    // Update progress
+    this.updateProgress();
+  }
+
+  /**
+   * Generate event input fields based on selected combined event
+   */
+  async generateEventInputs() {
+    // Clear existing inputs
+    this.daysContainer.innerHTML = '';
+
+    if (!this.eventConfig) return;
+
+    const eventsArrays = this.eventConfig.events; // Array of arrays (for multi-day events)
+    const isSingleDay = eventsArrays.length === 1;
+
+    // Create a section for each day
+    for (let dayIndex = 0; dayIndex < eventsArrays.length; dayIndex++) {
+      const dayEvents = eventsArrays[dayIndex];
+      const dayNumber = dayIndex + 1;
+
+      // Create day section
+      const daySection = document.createElement('div');
+      daySection.className = 'day-section';
+      daySection.setAttribute('data-day', dayNumber);
+
+      // Add day header (only for multi-day events)
+      if (!isSingleDay) {
+        const dayHeader = document.createElement('details');
+        dayHeader.open = true;
+
+        const summary = document.createElement('summary');
+        summary.className = 'day-section__header';
+        summary.textContent = `Day ${dayNumber}`;
+        dayHeader.appendChild(summary);
+
+        const contentWrapper = document.createElement('div');
+        contentWrapper.className = 'day-section__content';
+
+        // Generate inputs for this day
+        for (const eventKey of dayEvents) {
+          const eventParams = await combinedEventsConfigLoader.getEventParameters(
+            this.currentGender,
+            eventKey
+          );
+          const isHandTimeable = await combinedEventsConfigLoader.isHandTimeable(eventKey);
+
+          if (eventParams) {
+            const inputGroup = this.createEventInputGroup(eventKey, eventParams, isHandTimeable);
+            contentWrapper.appendChild(inputGroup);
+          }
+        }
+
+        dayHeader.appendChild(contentWrapper);
+        daySection.appendChild(dayHeader);
+      } else {
+        // Single day event - no accordion
+        const dayHeader = document.createElement('h4');
+        dayHeader.className = 'day-section__header';
+        dayHeader.textContent = this.eventConfig.displayName;
+        daySection.appendChild(dayHeader);
+
+        // Generate inputs
+        for (const eventKey of dayEvents) {
+          const eventParams = await combinedEventsConfigLoader.getEventParameters(
+            this.currentGender,
+            eventKey
+          );
+          const isHandTimeable = await combinedEventsConfigLoader.isHandTimeable(eventKey);
+
+          if (eventParams) {
+            const inputGroup = this.createEventInputGroup(eventKey, eventParams, isHandTimeable);
+            daySection.appendChild(inputGroup);
+          }
+        }
+      }
+
+      this.daysContainer.appendChild(daySection);
+    }
+  }
+
+  /**
+   * Create an input group for a single event
+   */
+  createEventInputGroup(eventKey, eventParams, isHandTimeable) {
+    const group = document.createElement('div');
+    group.className = 'event-input-group';
+    group.setAttribute('data-event', eventKey);
+
+    // Label
+    const label = document.createElement('label');
+    label.htmlFor = `input-${eventKey}`;
+    label.textContent = eventParams.displayName;
+    group.appendChild(label);
+
+    // Input container
+    const inputContainer = document.createElement('div');
+    inputContainer.className = 'input-with-controls';
+
+    // Text input
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = `input-${eventKey}`;
+    input.className = 'form-input event-performance-input';
+    input.setAttribute('data-event', eventKey);
+    input.setAttribute('aria-label', `Performance for ${eventParams.displayName}`);
+    input.placeholder = this.getPlaceholder(eventParams.measurement);
+
+    // Input event listener with debounce
+    input.addEventListener('input', () => this.handlePerformanceInput(eventKey));
+
+    inputContainer.appendChild(input);
+
+    // Hand timing checkbox (if applicable)
+    if (isHandTimeable) {
+      const checkboxWrapper = document.createElement('div');
+      checkboxWrapper.className = 'hand-timing-wrapper';
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.id = `hand-timing-${eventKey}`;
+      checkbox.className = 'hand-timing-checkbox';
+      checkbox.setAttribute('data-event', eventKey);
+      checkbox.setAttribute('aria-label', `Hand timed for ${eventParams.displayName}`);
+
+      const checkboxLabel = document.createElement('label');
+      checkboxLabel.htmlFor = `hand-timing-${eventKey}`;
+      checkboxLabel.textContent = 'Hand timed';
+      checkboxLabel.className = 'hand-timing-label';
+
+      // Checkbox event listener
+      checkbox.addEventListener('change', () => this.handlePerformanceInput(eventKey));
+
+      checkboxWrapper.appendChild(checkbox);
+      checkboxWrapper.appendChild(checkboxLabel);
+      inputContainer.appendChild(checkboxWrapper);
+    }
+
+    group.appendChild(inputContainer);
+
+    // Score display
+    const scoreDisplay = document.createElement('div');
+    scoreDisplay.className = 'event-score';
+    scoreDisplay.id = `score-${eventKey}`;
+    scoreDisplay.setAttribute('aria-live', 'polite');
+    scoreDisplay.textContent = '';
+    group.appendChild(scoreDisplay);
+
+    return group;
+  }
+
+  /**
+   * Get placeholder text based on measurement type
+   */
+  getPlaceholder(measurementType) {
+    switch (measurementType) {
+      case 'time':
+        return 'e.g., 10.5 or 1:23.4';
+      case 'distance':
+        return 'e.g., 7.50';
+      case 'height':
+        return 'e.g., 2.10';
+      default:
+        return '';
+    }
+  }
+
+  /**
+   * Handle performance input change with debouncing
+   */
+  handlePerformanceInput(eventKey) {
+    // Clear existing timer
+    if (this.debounceTimers[eventKey]) {
+      clearTimeout(this.debounceTimers[eventKey]);
+    }
+
+    // Set new timer
+    this.debounceTimers[eventKey] = setTimeout(() => {
+      this.processPerformanceInput(eventKey);
+    }, 300);
+  }
+
+  /**
+   * Process performance input and calculate score
+   */
+  async processPerformanceInput(eventKey) {
+    const input = document.getElementById(`input-${eventKey}`);
+    const scoreDisplay = document.getElementById(`score-${eventKey}`);
+    const handTimingCheckbox = document.getElementById(`hand-timing-${eventKey}`);
+
+    if (!input) return;
+
+    const inputValue = input.value.trim();
+
+    // If input is empty, clear the score
+    if (!inputValue) {
+      delete this.performances[eventKey];
+      scoreDisplay.textContent = '';
+      scoreDisplay.classList.remove('has-value');
+      input.classList.remove('input-error');
+      this.calculateTotals();
+      return;
+    }
+
+    try {
+      // Get event parameters
+      const eventParams = await combinedEventsConfigLoader.getEventParameters(
+        this.currentGender,
+        eventKey
+      );
+
+      if (!eventParams) return;
+
+      // Convert performance to numeric value
+      let performanceValue = convertPerformanceToValue(
+        inputValue,
+        eventParams.measurement,
+        eventKey
+      );
+
+      if (performanceValue === null || !validatePerformance(performanceValue)) {
+        input.classList.add('input-error');
+        scoreDisplay.textContent = 'Invalid input';
+        scoreDisplay.classList.remove('has-value');
+        delete this.performances[eventKey];
+        this.calculateTotals();
+        return;
+      }
+
+      // Apply hand timing offset if applicable
+      const isHandTimed = handTimingCheckbox?.checked || false;
+      if (isHandTimed && eventParams.measurement === 'time') {
+        const offset = await combinedEventsConfigLoader.getHandTimingOffset(eventKey);
+        performanceValue = applyHandTimingOffset(performanceValue, offset);
+      }
+
+      // Calculate score
+      const score = calculateEventScore(
+        performanceValue,
+        eventParams.parameters,
+        eventParams.measurement
+      );
+
+      // Update performance state
+      this.performances[eventKey] = {
+        value: performanceValue,
+        isHandTimed,
+        score,
+        inputValue
+      };
+
+      // Update UI
+      input.classList.remove('input-error');
+      scoreDisplay.textContent = `${score} points`;
+      scoreDisplay.classList.add('has-value');
+
+      // Recalculate totals
+      this.calculateTotals();
+    } catch (error) {
+      console.error('Error processing performance:', error);
+      input.classList.add('input-error');
+      scoreDisplay.textContent = 'Error';
+      scoreDisplay.classList.remove('has-value');
+    }
+  }
+
+  /**
+   * Calculate totals and update displays
+   */
+  calculateTotals() {
+    // Calculate total score and completion count
+    this.totalScore = 0;
+    this.completedCount = 0;
+
+    Object.values(this.performances).forEach(perf => {
+      if (perf.score !== undefined) {
+        this.totalScore += perf.score;
+        this.completedCount++;
+      }
+    });
+
+    // Update progress
+    this.updateProgress();
+
+    // Update running totals
+    this.updateRunningTotals();
+
+    // Update final score
+    this.updateFinalScore();
+  }
+
+  /**
+   * Update progress indicator
+   */
+  updateProgress() {
+    if (!this.eventConfig) return;
+
+    const totalEvents = this.eventConfig.events.flat().length;
+    this.progressText.textContent = `${this.completedCount}/${totalEvents} events completed`;
+  }
+
+  /**
+   * Update running totals display
+   */
+  async updateRunningTotals() {
+    if (!this.eventConfig) return;
+
+    const allEvents = this.eventConfig.events.flat();
+
+    // Only show running totals if at least one event is completed
+    if (this.completedCount === 0) {
+      this.runningTotals.classList.add('hidden');
+      return;
+    }
+
+    this.runningTotals.classList.remove('hidden');
+
+    let html = '<div class="running-totals-list">';
+    let runningTotal = 0;
+
+    // Calculate cumulative score for each completed event in order
+    for (const eventKey of allEvents) {
+      const perf = this.performances[eventKey];
+      if (perf && perf.score !== undefined) {
+        runningTotal += perf.score;
+
+        // Get the display name for the event
+        const eventParams = await combinedEventsConfigLoader.getEventParameters(
+          this.currentGender,
+          eventKey
+        );
+        const displayName = eventParams ? eventParams.displayName : eventKey;
+
+        html += `
+          <div class="running-total-item">
+            <span class="running-total-label">After ${displayName}:</span>
+            <span class="running-total-value">${runningTotal} points</span>
+          </div>
+        `;
+      }
+    }
+
+    html += '</div>';
+    this.runningTotalsContent.innerHTML = html;
+  }
+
+  /**
+   * Update final score display
+   */
+  async updateFinalScore() {
+    if (!this.eventConfig) return;
+
+    const pointsValue = this.finalScore.querySelector('.points-value');
+
+    if (pointsValue) {
+      pointsValue.textContent = this.totalScore;
+    }
+
+    // Update event scores summary
+    await this.updateEventScoresSummary();
+  }
+
+  /**
+   * Update individual event scores summary
+   */
+  async updateEventScoresSummary() {
+    if (!this.eventConfig || !this.eventScoresSummary) return;
+
+    const allEvents = this.eventConfig.events.flat();
+
+    // Only show summary if at least one event is completed
+    if (this.completedCount === 0) {
+      this.eventScoresSummary.innerHTML = '<p>Enter performances to see individual scores</p>';
+      return;
+    }
+
+    let html = '<div class="event-scores-list">';
+
+    // Display score for each completed event
+    for (const eventKey of allEvents) {
+      const perf = this.performances[eventKey];
+      if (perf && perf.score !== undefined) {
+        // Get the display name for the event
+        const eventParams = await combinedEventsConfigLoader.getEventParameters(
+          this.currentGender,
+          eventKey
+        );
+        const displayName = eventParams ? eventParams.displayName : eventKey;
+
+        html += `
+          <div class="event-score-item">
+            <span class="event-score-name">${displayName}</span>
+            <span class="event-score-points">${perf.score} pts</span>
+          </div>
+        `;
+      }
+    }
+
+    html += '</div>';
+    this.eventScoresSummary.innerHTML = html;
+  }
+
+  /**
+   * Handle clear all button
+   */
+  handleClearAll() {
+    // Clear all input fields
+    const inputs = this.daysContainer.querySelectorAll('.event-performance-input');
+    inputs.forEach(input => {
+      input.value = '';
+      input.classList.remove('input-error');
+    });
+
+    // Clear all checkboxes
+    const checkboxes = this.daysContainer.querySelectorAll('.hand-timing-checkbox');
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = false;
+    });
+
+    // Clear all score displays
+    const scores = this.daysContainer.querySelectorAll('.event-score');
+    scores.forEach(score => {
+      score.textContent = '';
+      score.classList.remove('has-value');
+    });
+
+    // Reset state
+    this.performances = {};
+    this.totalScore = 0;
+    this.completedCount = 0;
+
+    // Update displays
+    this.calculateTotals();
+  }
+
+  /**
+   * Hide form
+   */
+  hideForm() {
+    this.calculatorForm?.classList.add('hidden');
   }
 
   /**
    * Show loading indicator
    */
   showLoading() {
-    if (this.loadingIndicator) {
-      this.loadingIndicator.classList.remove('hidden');
-    }
+    this.loadingIndicator?.classList.remove('hidden');
   }
 
   /**
    * Hide loading indicator
    */
   hideLoading() {
-    if (this.loadingIndicator) {
-      this.loadingIndicator.classList.add('hidden');
-    }
+    this.loadingIndicator?.classList.add('hidden');
   }
 
   /**
@@ -152,38 +668,13 @@ class CombinedEventsCalculator {
   }
 
   /**
-   * Show results container
-   */
-  showResults() {
-    if (this.resultsContainer) {
-      this.resultsContainer.classList.remove('hidden');
-    }
-  }
-
-  /**
    * Hide results container
    */
   hideResults() {
-    if (this.resultsContainer) {
-      this.resultsContainer.classList.add('hidden');
-    }
-  }
-
-  /**
-   * Clear all results
-   */
-  clearResults() {
-    this.hideResults();
-    this.hideError();
-    if (this.resultsContent) {
-      this.resultsContent.innerHTML = '';
-    }
+    this.resultsContainer?.classList.add('hidden');
   }
 }
 
 // Initialize calculator when DOM is ready
 const calculator = new CombinedEventsCalculator();
 calculator.initialize();
-
-// Initialize navigation
-Navigation.initialize();

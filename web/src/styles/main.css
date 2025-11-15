@@ -3,6 +3,7 @@
 @import './components/toggle.css';
 @import './components/results-card.css';
 @import './components/history-table.css';
+@import './combined-events.css';
 
 /* Reset and Base Styles */
 *,

@@ -40,30 +40,60 @@
           <p class="calculator__description">
             Calculate total scores for combined events (Decathlon, Heptathlon, Pentathlon) using official World Athletics scoring tables.
           </p>
-          <p class="calculator__description" style="color: #f57c00; font-weight: 500; margin-top: 1rem;">
-            🚧 Coming Soon! This calculator is currently under development.
-          </p>
         </div>
 
         <div class="calculator__controls">
-          <!-- TODO: Add event selection (Decathlon, Heptathlon, Pentathlon) -->
-          <!-- TODO: Add gender selection (Men's/Women's) -->
-          <!-- TODO: Add performance input fields for each discipline -->
-          <!-- TODO: Add calculate button -->
+          <div class="form-group">
+            <label for="gender-select">Gender</label>
+            <select id="gender-select" class="form-select" aria-label="Select gender">
+              <option value="men">Men</option>
+              <option value="women">Women</option>
+            </select>
+          </div>
 
           <div class="form-group">
-            <p style="text-align: center; padding: 2rem; color: #666;">
-              Placeholder for calculator controls. This will include event selection, discipline inputs, and calculation options.
-            </p>
+            <label for="combined-event-select">Combined Event</label>
+            <select id="combined-event-select" class="form-select" aria-label="Select combined event">
+              <option value="">Select an event...</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="calculator-form" class="calculator__form hidden">
+          <div id="progress-indicator" class="progress-indicator" role="status" aria-live="polite">
+            <span id="progress-text">0/0 events completed</span>
+          </div>
+
+          <div id="days-container" class="days-container">
+            <!-- Event input fields will be dynamically generated here -->
+          </div>
+
+          <div class="clear-all-container">
+            <button id="clear-all-btn" class="btn clear-all-btn hidden" aria-label="Clear all entered performances">
+              Clear All
+            </button>
+          </div>
+
+          <div id="running-totals" class="running-totals hidden">
+            <h4>Running Total</h4>
+            <div id="running-totals-content" class="running-totals-content">
+              <!-- Cumulative scores will be displayed here -->
+            </div>
           </div>
         </div>
 
         <div id="results-container" class="calculator__results hidden">
-          <div class="results-header">
-            <h3>Results</h3>
-          </div>
-          <div id="results-content" class="results-content">
-            <!-- TODO: Display individual discipline scores and total score -->
+          <div class="result-card">
+            <h3 class="result-card__title">Final Score</h3>
+            <div class="result-card__points" id="final-score" aria-live="polite">
+              <span class="points-value">0</span>
+              <span class="points-label">points</span>
+            </div>
+            <div class="result-card__content">
+              <div id="event-scores-summary" class="event-scores-summary">
+                <!-- Individual event scores will be displayed here -->
+              </div>
+            </div>
           </div>
         </div>
 
@@ -78,6 +108,21 @@
       </section>
 
       <section class="info-section">
+        <h3>How to Use</h3>
+        <ul>
+          <li><strong>Select Gender:</strong> Choose between Men's or Women's events</li>
+          <li><strong>Select Combined Event:</strong> Choose from Pentathlon, Heptathlon, or Decathlon</li>
+          <li><strong>Enter Performances:</strong> Input performance for each discipline in the following formats:
+            <ul>
+              <li><strong>Track Events:</strong> Enter time as seconds (e.g., "10.5") or minutes:seconds (e.g., "1:23.4" or "4:15.32")</li>
+              <li><strong>Field Events:</strong> Enter distances/heights in meters (e.g., "7.50" for long jump, "2.10" for high jump)</li>
+              <li><strong>Hand Timing:</strong> For applicable track events, check the hand timing box to add the official offset (0.24s or 0.14s)</li>
+            </ul>
+          </li>
+          <li><strong>View Scores:</strong> Individual event scores and running totals update automatically as you enter performances</li>
+          <li><strong>Clear All:</strong> Use the "Clear All" button to reset all entries and start over</li>
+        </ul>
+
         <h3>About Combined Events</h3>
         <p>
           Combined events are athletics competitions that consist of multiple track and field disciplines.
@@ -85,20 +130,35 @@
           the highest total score.
         </p>
 
-        <h4>Event Types</h4>
+        <h4>Age Groups by Event</h4>
+        <p><strong>Men's Events:</strong></p>
         <ul>
-          <li><strong>Decathlon (Men):</strong> 10 events over two days - 100m, Long Jump, Shot Put, High Jump, 400m, 110m Hurdles, Discus, Pole Vault, Javelin, 1500m</li>
-          <li><strong>Heptathlon (Women):</strong> 7 events over two days - 100m Hurdles, High Jump, Shot Put, 200m, Long Jump, Javelin, 800m</li>
-          <li><strong>Pentathlon (Indoor):</strong> 5 events - Men: 60m Hurdles, Long Jump, Shot Put, High Jump, 1000m; Women: 60m Hurdles, High Jump, Shot Put, Long Jump, 800m</li>
+          <li><strong>Pentathlon:</strong> U18, U20, Open</li>
+          <li><strong>Pentathlon (Short Track):</strong> U18, U20, Open</li>
+          <li><strong>Heptathlon (Short Track):</strong> U18, U20, Open</li>
+          <li><strong>Decathlon:</strong> U18, U20, Open</li>
+        </ul>
+
+        <p><strong>Women's Events:</strong></p>
+        <ul>
+          <li><strong>Pentathlon (Short Track):</strong> U18, U20, Open</li>
+          <li><strong>Heptathlon:</strong> U18, U20, Open</li>
+          <li><strong>Decathlon:</strong> U20, Open</li>
         </ul>
 
         <h4>Scoring System</h4>
         <p>
-          Each discipline uses World Athletics' official scoring tables to convert performances into points.
-          The tables are designed to balance the scoring across different event types (running, jumping, throwing).
+          Each discipline uses World Athletics' official scoring formulas to convert performances into points:
         </p>
-
-        <!-- TODO: Add usage instructions when calculator is implemented -->
+        <ul>
+          <li><strong>Track Events:</strong> Points = a × (b - Time)<sup>c</sup></li>
+          <li><strong>Jumps:</strong> Points = a × (Height - b)<sup>c</sup></li>
+          <li><strong>Throws:</strong> Points = a × (Distance - b)<sup>c</sup></li>
+        </ul>
+        <p>
+          The formulas are calibrated to balance scoring across different event types, ensuring that no single
+          discipline dominates the total score. All point values are rounded down to the nearest whole number.
+        </p>
       </section>
     </div>
   </main>
