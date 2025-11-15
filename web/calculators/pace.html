@@ -66,7 +66,15 @@
           </div>
 
           <!-- Pace Mode Controls -->
-          <div id="pace-mode-controls">
+          <div id="pace-mode-controls" class="mode-controls">
+            <div class="form-group">
+              <label for="distance-select-pace">Distance</label>
+              <select id="distance-select-pace" class="form-select">
+                <option value="">Select distance...</option>
+              </select>
+              <small class="form-help" id="distance-equivalent-pace"></small>
+            </div>
+
             <div class="form-group">
               <label for="time-input-pace">Total Time</label>
               <input
@@ -79,14 +87,6 @@
             </div>
 
             <div class="form-group">
-              <label for="distance-select-pace">Distance</label>
-              <select id="distance-select-pace" class="form-select">
-                <option value="">Select distance...</option>
-              </select>
-              <small class="form-help" id="distance-equivalent-pace"></small>
-            </div>
-
-            <div class="form-group">
               <label for="pace-unit-select">Pace Unit</label>
               <select id="pace-unit-select" class="form-select">
                 <option value="km">km</option>
@@ -94,13 +94,21 @@
               </select>
             </div>
 
-            <div class="form-group">
+            <div class="form-group form-group--button">
               <button type="button" id="calculate-btn-pace" class="btn btn-primary">Calculate</button>
             </div>
           </div>
 
           <!-- Total Time Mode Controls -->
-          <div id="time-mode-controls" class="hidden">
+          <div id="time-mode-controls" class="mode-controls hidden">
+            <div class="form-group">
+              <label for="distance-select-time">Distance</label>
+              <select id="distance-select-time" class="form-select">
+                <option value="">Select distance...</option>
+              </select>
+              <small class="form-help" id="distance-equivalent-time"></small>
+            </div>
+
             <div class="form-group">
               <label for="pace-input-time">Pace</label>
               <input
@@ -120,15 +128,7 @@
               </select>
             </div>
 
-            <div class="form-group">
-              <label for="distance-select-time">Distance</label>
-              <select id="distance-select-time" class="form-select">
-                <option value="">Select distance...</option>
-              </select>
-              <small class="form-help" id="distance-equivalent-time"></small>
-            </div>
-
-            <div class="form-group">
+            <div class="form-group form-group--button">
               <button type="button" id="calculate-btn-time" class="btn btn-primary">Calculate</button>
             </div>
           </div>
