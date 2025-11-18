@@ -28,6 +28,24 @@
   padding-top: var(--spacing-md);
 }
 
+/* Distance Input Group - side-by-side layout for custom distance input */
+.distance-input-group {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: stretch;
+}
+
+.distance-input-group .form-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.distance-input-group .form-select {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 100px;
+}
+
 /* Responsive: Horizontal layout on wider screens */
 @media (min-width: 640px) {
   /* Ensure mode toggle spans full width */

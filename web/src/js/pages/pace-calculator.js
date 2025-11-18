@@ -39,25 +39,49 @@ class PaceCalculator extends PaceCalculatorBase {
    * Initialize DOM elements
    */
   initializeElements() {
-    // Mode toggle buttons
+    // Calculation mode toggle buttons (Pace / Total Time)
     this.paceModeBtn = document.getElementById('mode-toggle-pace');
     this.timeModeBtn = document.getElementById('mode-toggle-time');
 
-    // Pace mode elements
-    this.paceControls = document.getElementById('pace-mode-controls');
-    this.timeInputPace = document.getElementById('time-input-pace');
-    this.distanceSelectPace = document.getElementById('distance-select-pace');
-    this.paceUnitSelect = document.getElementById('pace-unit-select');
-    this.distanceEquivalentPace = document.getElementById('distance-equivalent-pace');
-    this.calculateBtnPace = document.getElementById('calculate-btn-pace');
+    // Standard/Advanced mode toggle buttons
+    this.standardModeBtn = document.getElementById('mode-toggle-standard');
+    this.advancedModeBtn = document.getElementById('mode-toggle-advanced');
 
-    // Time mode elements
-    this.timeControls = document.getElementById('time-mode-controls');
-    this.paceInputTime = document.getElementById('pace-input-time');
-    this.paceUnitSelectTime = document.getElementById('pace-unit-select-time');
-    this.distanceSelectTime = document.getElementById('distance-select-time');
-    this.distanceEquivalentTime = document.getElementById('distance-equivalent-time');
-    this.calculateBtnTime = document.getElementById('calculate-btn-time');
+    // Pace Standard mode elements
+    this.paceStandardControls = document.getElementById('pace-standard-controls');
+    this.timeInputPaceStandard = document.getElementById('time-input-pace-standard');
+    this.distanceSelectPaceStandard = document.getElementById('distance-select-pace-standard');
+    this.paceUnitSelectStandard = document.getElementById('pace-unit-select-standard');
+    this.distanceEquivalentPaceStandard = document.getElementById('distance-equivalent-pace-standard');
+    this.calculateBtnPaceStandard = document.getElementById('calculate-btn-pace-standard');
+
+    // Pace Advanced mode elements
+    this.paceAdvancedControls = document.getElementById('pace-advanced-controls');
+    this.timeInputPaceAdvanced = document.getElementById('time-input-pace-advanced');
+    this.distanceInputPaceAdvanced = document.getElementById('distance-input-pace-advanced');
+    this.distanceUnitSelectPaceAdvanced = document.getElementById('distance-unit-select-pace-advanced');
+    this.paceIntervalInputPaceAdvanced = document.getElementById('pace-interval-input-pace-advanced');
+    this.paceIntervalUnitSelectPaceAdvanced = document.getElementById('pace-interval-unit-select-pace-advanced');
+    this.distanceEquivalentPaceAdvanced = document.getElementById('distance-equivalent-pace-advanced');
+    this.calculateBtnPaceAdvanced = document.getElementById('calculate-btn-pace-advanced');
+
+    // Time Standard mode elements
+    this.timeStandardControls = document.getElementById('time-standard-controls');
+    this.paceInputTimeStandard = document.getElementById('pace-input-time-standard');
+    this.paceUnitSelectTimeStandard = document.getElementById('pace-unit-select-time-standard');
+    this.distanceSelectTimeStandard = document.getElementById('distance-select-time-standard');
+    this.distanceEquivalentTimeStandard = document.getElementById('distance-equivalent-time-standard');
+    this.calculateBtnTimeStandard = document.getElementById('calculate-btn-time-standard');
+
+    // Time Advanced mode elements
+    this.timeAdvancedControls = document.getElementById('time-advanced-controls');
+    this.paceInputTimeAdvanced = document.getElementById('pace-input-time-advanced');
+    this.paceIntervalInputTimeAdvanced = document.getElementById('pace-interval-input-time-advanced');
+    this.paceIntervalUnitSelectTimeAdvanced = document.getElementById('pace-interval-unit-select-time-advanced');
+    this.distanceInputTimeAdvanced = document.getElementById('distance-input-time-advanced');
+    this.distanceUnitSelectTimeAdvanced = document.getElementById('distance-unit-select-time-advanced');
+    this.distanceEquivalentTimeAdvanced = document.getElementById('distance-equivalent-time-advanced');
+    this.calculateBtnTimeAdvanced = document.getElementById('calculate-btn-time-advanced');
 
     // Results
     this.resultsContent = document.getElementById('results-content');
@@ -65,6 +89,9 @@ class PaceCalculator extends PaceCalculatorBase {
     // History
     this.historySection = document.getElementById('history-section');
     this.historyTableBody = document.getElementById('history-table-body');
+
+    // Initialize state from sessionStorage
+    this.initializeState();
 
     // Populate distance dropdowns
     this.populateDistanceDropdowns();
@@ -80,13 +107,93 @@ class PaceCalculator extends PaceCalculatorBase {
   }
 
   /**
-   * Populate distance select dropdowns
+   * Initialize state from sessionStorage
+   */
+  initializeState() {
+    // Load state from sessionStorage or use defaults
+    this.currentMode = sessionStorage.getItem('paceCalculatorMode') || 'pace';
+    this.currentPaceMode = sessionStorage.getItem('paceCalculatorPaceMode') || 'standard';
+    this.currentTimeMode = sessionStorage.getItem('paceCalculatorTimeMode') || 'standard';
+
+    // Apply initial mode state
+    this.applyModeState();
+  }
+
+  /**
+   * Save state to sessionStorage
+   */
+  saveState() {
+    sessionStorage.setItem('paceCalculatorMode', this.currentMode);
+    sessionStorage.setItem('paceCalculatorPaceMode', this.currentPaceMode);
+    sessionStorage.setItem('paceCalculatorTimeMode', this.currentTimeMode);
+  }
+
+  /**
+   * Apply current mode state to UI
+   */
+  applyModeState() {
+    // Update calculation mode buttons (Pace / Total Time)
+    if (this.currentMode === 'pace') {
+      this.paceModeBtn.classList.add('mode-toggle__option--active');
+      this.timeModeBtn.classList.remove('mode-toggle__option--active');
+    } else {
+      this.timeModeBtn.classList.add('mode-toggle__option--active');
+      this.paceModeBtn.classList.remove('mode-toggle__option--active');
+    }
+
+    // Update Standard/Advanced buttons based on current calculation mode
+    const currentSubMode = this.currentMode === 'pace' ? this.currentPaceMode : this.currentTimeMode;
+    if (currentSubMode === 'standard') {
+      this.standardModeBtn.classList.add('mode-toggle__option--active');
+      this.advancedModeBtn.classList.remove('mode-toggle__option--active');
+    } else {
+      this.advancedModeBtn.classList.add('mode-toggle__option--active');
+      this.standardModeBtn.classList.remove('mode-toggle__option--active');
+    }
+
+    // Show/hide appropriate control group
+    this.updateControlVisibility();
+  }
+
+  /**
+   * Update which control group is visible
+   */
+  updateControlVisibility() {
+    // Hide all control groups
+    this.paceStandardControls.classList.add('hidden');
+    this.paceAdvancedControls.classList.add('hidden');
+    this.timeStandardControls.classList.add('hidden');
+    this.timeAdvancedControls.classList.add('hidden');
+
+    // Show the appropriate control group
+    if (this.currentMode === 'pace') {
+      if (this.currentPaceMode === 'standard') {
+        this.paceStandardControls.classList.remove('hidden');
+      } else {
+        this.paceAdvancedControls.classList.remove('hidden');
+      }
+    } else {
+      if (this.currentTimeMode === 'standard') {
+        this.timeStandardControls.classList.remove('hidden');
+      } else {
+        this.timeAdvancedControls.classList.remove('hidden');
+      }
+    }
+  }
+
+  /**
+   * Populate distance select dropdowns (Standard mode only)
    */
   populateDistanceDropdowns() {
     const distances = this.getPaceDistances();
 
-    // Populate both dropdowns
-    [this.distanceSelectPace, this.distanceSelectTime].forEach(select => {
+    // Only populate Standard mode dropdowns (Advanced mode uses custom input)
+    const dropdowns = [
+      this.distanceSelectPaceStandard,
+      this.distanceSelectTimeStandard
+    ];
+
+    dropdowns.forEach(select => {
       distances.forEach(event => {
         const option = document.createElement('option');
         option.value = event.key;
@@ -100,145 +207,376 @@ class PaceCalculator extends PaceCalculatorBase {
    * Set default distance to 5km
    */
   setDefaultDistance() {
+    // Standard mode: set default to 5km dropdown option
     const defaultDistance = '5km';
-    this.distanceSelectPace.value = defaultDistance;
-    this.distanceSelectTime.value = defaultDistance;
-    this.updateDistanceEquivalent('pace');
-    this.updateDistanceEquivalent('time');
+    this.distanceSelectPaceStandard.value = defaultDistance;
+    this.distanceSelectTimeStandard.value = defaultDistance;
+    this.updateDistanceEquivalent('pace', 'standard');
+    this.updateDistanceEquivalent('time', 'standard');
+
+    // Advanced mode: set default values for custom input (5 km)
+    this.distanceInputPaceAdvanced.value = '5';
+    this.distanceInputTimeAdvanced.value = '5';
+    // Unit selects already default to 'km' in HTML
+  }
+
+  /**
+   * Convert distance to metres based on unit
+   * @param {number} distance - The distance value
+   * @param {string} unit - The unit (m, km, miles, yards)
+   * @returns {number} Distance in metres
+   */
+  convertDistanceToMetres(distance, unit) {
+    const conversions = {
+      'm': 1,
+      'km': 1000,
+      'miles': 1609.344,
+      'yards': 0.9144
+    };
+
+    return distance * (conversions[unit] || 1);
+  }
+
+  /**
+   * Validate distance input
+   * @param {string} value - The distance value to validate
+   * @returns {boolean} True if valid
+   */
+  validateDistance(value) {
+    const num = parseFloat(value);
+    return !isNaN(num) && num > 0;
   }
 
   /**
    * Setup event listeners
    */
   setupEventListeners() {
-    // Mode toggle
+    // Calculation mode toggle (Pace / Total Time)
     this.paceModeBtn.addEventListener('click', () => this.switchMode('pace'));
     this.timeModeBtn.addEventListener('click', () => this.switchMode('totalTime'));
 
-    // Pace mode button
-    this.calculateBtnPace.addEventListener('click', () => this.handlePaceModeCalculate());
+    // Standard/Advanced mode toggle
+    this.standardModeBtn.addEventListener('click', () => this.switchSubMode('standard'));
+    this.advancedModeBtn.addEventListener('click', () => this.switchSubMode('advanced'));
 
-    // Pace mode distance/unit change (update equivalent display only)
-    this.distanceSelectPace.addEventListener('change', () => {
-      this.updateDistanceEquivalent('pace');
+    // Pace Standard mode
+    this.calculateBtnPaceStandard.addEventListener('click', () => this.handlePaceModeCalculate('standard'));
+    this.distanceSelectPaceStandard.addEventListener('change', () => {
+      this.updateDistanceEquivalent('pace', 'standard');
     });
-    this.paceUnitSelect.addEventListener('change', () => {
-      this.updateDistanceEquivalent('pace');
+    this.paceUnitSelectStandard.addEventListener('change', () => {
+      this.updateDistanceEquivalent('pace', 'standard');
     });
 
-    // Time mode button
-    this.calculateBtnTime.addEventListener('click', () => this.handleTimeModeCalculate());
-
-    // Time mode distance/unit change (update equivalent display only)
-    this.paceUnitSelectTime.addEventListener('change', () => {
-      this.updateDistanceEquivalent('time');
+    // Pace Advanced mode
+    this.calculateBtnPaceAdvanced.addEventListener('click', () => this.handlePaceModeCalculate('advanced'));
+    this.distanceInputPaceAdvanced.addEventListener('input', () => {
+      this.updateDistanceEquivalent('pace', 'advanced');
     });
-    this.distanceSelectTime.addEventListener('change', () => {
-      this.updateDistanceEquivalent('time');
+    this.distanceUnitSelectPaceAdvanced.addEventListener('change', () => {
+      this.updateDistanceEquivalent('pace', 'advanced');
+    });
+
+    // Time Standard mode
+    this.calculateBtnTimeStandard.addEventListener('click', () => this.handleTimeModeCalculate('standard'));
+    this.paceUnitSelectTimeStandard.addEventListener('change', () => {
+      this.updateDistanceEquivalent('time', 'standard');
+    });
+    this.distanceSelectTimeStandard.addEventListener('change', () => {
+      this.updateDistanceEquivalent('time', 'standard');
+    });
+
+    // Time Advanced mode
+    this.calculateBtnTimeAdvanced.addEventListener('click', () => this.handleTimeModeCalculate('advanced'));
+    this.distanceInputTimeAdvanced.addEventListener('input', () => {
+      this.updateDistanceEquivalent('time', 'advanced');
+    });
+    this.distanceUnitSelectTimeAdvanced.addEventListener('change', () => {
+      this.updateDistanceEquivalent('time', 'advanced');
     });
   }
 
   /**
-   * Switch between calculation modes
+   * Switch between calculation modes (Pace / Total Time)
    */
   switchMode(mode) {
     this.currentMode = mode;
 
-    // Update button states
+    // Update calculation mode buttons
     if (mode === 'pace') {
       this.paceModeBtn.classList.add('mode-toggle__option--active');
       this.timeModeBtn.classList.remove('mode-toggle__option--active');
-      this.paceControls.classList.remove('hidden');
-      this.timeControls.classList.add('hidden');
     } else {
       this.timeModeBtn.classList.add('mode-toggle__option--active');
       this.paceModeBtn.classList.remove('mode-toggle__option--active');
-      this.timeControls.classList.remove('hidden');
-      this.paceControls.classList.add('hidden');
     }
 
-    // Clear results
+    // Update Standard/Advanced toggle to reflect the mode for this calculation type
+    const currentSubMode = mode === 'pace' ? this.currentPaceMode : this.currentTimeMode;
+    if (currentSubMode === 'standard') {
+      this.standardModeBtn.classList.add('mode-toggle__option--active');
+      this.advancedModeBtn.classList.remove('mode-toggle__option--active');
+    } else {
+      this.advancedModeBtn.classList.add('mode-toggle__option--active');
+      this.standardModeBtn.classList.remove('mode-toggle__option--active');
+    }
+
+    // Update control visibility
+    this.updateControlVisibility();
+
+    // Save state and clear results
+    this.saveState();
+    this.clearResults();
+  }
+
+  /**
+   * Switch between Standard/Advanced modes
+   */
+  switchSubMode(subMode) {
+    // Update the appropriate mode variable based on current calculation mode
+    if (this.currentMode === 'pace') {
+      this.currentPaceMode = subMode;
+    } else {
+      this.currentTimeMode = subMode;
+    }
+
+    // Update Standard/Advanced toggle buttons
+    if (subMode === 'standard') {
+      this.standardModeBtn.classList.add('mode-toggle__option--active');
+      this.advancedModeBtn.classList.remove('mode-toggle__option--active');
+    } else {
+      this.advancedModeBtn.classList.add('mode-toggle__option--active');
+      this.standardModeBtn.classList.remove('mode-toggle__option--active');
+    }
+
+    // Update control visibility
+    this.updateControlVisibility();
+
+    // Save state and clear results
+    this.saveState();
     this.clearResults();
   }
 
   /**
    * Update distance equivalent display
    */
-  updateDistanceEquivalent(mode) {
-    const select = mode === 'pace' ? this.distanceSelectPace : this.distanceSelectTime;
-    const display = mode === 'pace' ? this.distanceEquivalentPace : this.distanceEquivalentTime;
-    const paceUnit = mode === 'pace' ? this.paceUnitSelect.value : this.paceUnitSelectTime.value;
+  updateDistanceEquivalent(mode, subMode) {
+    let display, paceUnit, distanceValue, distanceUnit;
 
-    const eventKey = select.value;
-    if (!eventKey) {
-      display.textContent = '';
-      return;
-    }
+    if (subMode === 'standard') {
+      // Standard mode: get from dropdown
+      let select;
+      if (mode === 'pace') {
+        select = this.distanceSelectPaceStandard;
+        display = this.distanceEquivalentPaceStandard;
+        paceUnit = this.paceUnitSelectStandard.value;
+      } else {
+        select = this.distanceSelectTimeStandard;
+        display = this.distanceEquivalentTimeStandard;
+        paceUnit = this.paceUnitSelectTimeStandard.value;
+      }
 
-    const eventConfig = this.getEventConfig(eventKey);
-    if (!eventConfig) {
-      display.textContent = '';
-      return;
-    }
+      const eventKey = select.value;
+      if (!eventKey) {
+        display.textContent = '';
+        return;
+      }
 
-    // Show equivalent distance if units differ
-    const targetUnit = paceUnit === 'mile' ? 'miles' : 'km';
-    if (eventConfig.unit !== targetUnit) {
-      const converted = convertDistance(eventConfig.distance, eventConfig.unit, targetUnit);
-      const formatted = formatDistance(converted, targetUnit);
-      display.textContent = `≈ ${formatted}`;
+      const eventConfig = this.getEventConfig(eventKey);
+      if (!eventConfig) {
+        display.textContent = '';
+        return;
+      }
+
+      // Show equivalent distance if units differ
+      const targetUnit = paceUnit === 'mile' ? 'miles' : 'km';
+      if (eventConfig.unit !== targetUnit) {
+        const converted = convertDistance(eventConfig.distance, eventConfig.unit, targetUnit);
+        const formatted = formatDistance(converted, targetUnit);
+        display.textContent = `≈ ${formatted}`;
+      } else {
+        display.textContent = '';
+      }
+
     } else {
-      display.textContent = '';
+      // Advanced mode: get from custom input
+      let distanceInput, distanceUnitSelect;
+      if (mode === 'pace') {
+        distanceInput = this.distanceInputPaceAdvanced;
+        distanceUnitSelect = this.distanceUnitSelectPaceAdvanced;
+        display = this.distanceEquivalentPaceAdvanced;
+        paceUnit = this.paceUnitSelectAdvanced.value;
+      } else {
+        distanceInput = this.distanceInputTimeAdvanced;
+        distanceUnitSelect = this.distanceUnitSelectTimeAdvanced;
+        display = this.distanceEquivalentTimeAdvanced;
+        paceUnit = this.paceUnitSelectTimeAdvanced.value;
+      }
+
+      distanceValue = distanceInput.value.trim();
+      distanceUnit = distanceUnitSelect.value;
+
+      if (!distanceValue || !this.validateDistance(distanceValue)) {
+        display.textContent = '';
+        return;
+      }
+
+      // Calculate equivalent in different units
+      const distance = parseFloat(distanceValue);
+
+      // Show equivalent in km, miles, or both depending on current selection
+      const equivalents = [];
+
+      if (distanceUnit !== 'km') {
+        const distanceInMetres = this.convertDistanceToMetres(distance, distanceUnit);
+        const inKm = distanceInMetres / 1000;
+        equivalents.push(`${formatDistance(inKm, 'km')}`);
+      }
+
+      if (distanceUnit !== 'miles') {
+        const distanceInMetres = this.convertDistanceToMetres(distance, distanceUnit);
+        const inMiles = distanceInMetres / 1609.344;
+        equivalents.push(`${formatDistance(inMiles, 'miles')}`);
+      }
+
+      if (equivalents.length > 0) {
+        display.textContent = `≈ ${equivalents.join(' / ')}`;
+      } else {
+        display.textContent = '';
+      }
     }
   }
 
   /**
    * Handle pace mode calculation (Distance + Time → Pace)
    */
-  handlePaceModeCalculate() {
+  handlePaceModeCalculate(subMode) {
     try {
       this.hideError();
-      this.timeInputPace.classList.remove('input-error');
-      this.distanceSelectPace.classList.remove('input-error');
 
-      // Get inputs
-      const timeInput = this.timeInputPace.value.trim();
-      const distanceKey = this.distanceSelectPace.value;
-      const paceUnit = this.paceUnitSelect.value;
+      let timeInput, paceUnitSelect, distanceMetres, distanceDisplayName;
 
-      // Validate inputs
-      if (!timeInput || !distanceKey) {
-        this.hideResults();
-        return;
+      if (subMode === 'standard') {
+        // Standard mode: use dropdown distance
+        timeInput = this.timeInputPaceStandard;
+        const distanceSelect = this.distanceSelectPaceStandard;
+        paceUnitSelect = this.paceUnitSelectStandard;
+
+        timeInput.classList.remove('input-error');
+        distanceSelect.classList.remove('input-error');
+
+        const timeInputValue = timeInput.value.trim();
+        const distanceKey = distanceSelect.value;
+
+        if (!timeInputValue || !distanceKey) {
+          this.hideResults();
+          return;
+        }
+
+        const totalTimeSeconds = parseTimeInput(timeInputValue);
+        if (!this.validateTime(totalTimeSeconds)) {
+          timeInput.classList.add('input-error');
+          this.showError('Please enter a valid time (e.g., 25:00 or 1:23:45)');
+          this.hideResults();
+          return;
+        }
+
+        distanceMetres = getDistanceInMetres(distanceKey, this.eventsConfig);
+        const eventConfig = this.getEventConfig(distanceKey);
+        distanceDisplayName = eventConfig.displayName;
+        const paceUnit = paceUnitSelect.value;
+
+        const paceSeconds = calculatePace(distanceMetres, totalTimeSeconds, paceUnit);
+        this.displayPaceResults(paceSeconds, paceUnit, distanceMetres, eventConfig, totalTimeSeconds);
+
+        this.saveToHistory({
+          mode: 'pace',
+          distance: distanceDisplayName,
+          totalTime: formatTotalTime(totalTimeSeconds),
+          pace: `${formatPaceTime(paceSeconds)} /${paceUnit}`,
+          timestamp: Date.now()
+        });
+
+      } else {
+        // Advanced mode: use custom distance input and pace interval
+        timeInput = this.timeInputPaceAdvanced;
+        const distanceInput = this.distanceInputPaceAdvanced;
+        const distanceUnitSelect = this.distanceUnitSelectPaceAdvanced;
+        const paceIntervalInput = this.paceIntervalInputPaceAdvanced;
+        const paceIntervalUnitSelect = this.paceIntervalUnitSelectPaceAdvanced;
+
+        timeInput.classList.remove('input-error');
+        distanceInput.classList.remove('input-error');
+        paceIntervalInput.classList.remove('input-error');
+
+        const timeInputValue = timeInput.value.trim();
+        const distanceValue = distanceInput.value.trim();
+        const distanceUnit = distanceUnitSelect.value;
+        const paceIntervalValue = paceIntervalInput.value.trim();
+        const paceIntervalUnit = paceIntervalUnitSelect.value;
+
+        if (!timeInputValue || !distanceValue || !paceIntervalValue) {
+          this.hideResults();
+          return;
+        }
+
+        // Validate distance
+        if (!this.validateDistance(distanceValue)) {
+          distanceInput.classList.add('input-error');
+          this.showError('Please enter a valid distance greater than zero');
+          this.hideResults();
+          return;
+        }
+
+        // Validate pace interval
+        if (!this.validateDistance(paceIntervalValue)) {
+          paceIntervalInput.classList.add('input-error');
+          this.showError('Please enter a valid pace interval greater than zero');
+          this.hideResults();
+          return;
+        }
+
+        // Validate time
+        const totalTimeSeconds = parseTimeInput(timeInputValue);
+        if (!this.validateTime(totalTimeSeconds)) {
+          timeInput.classList.add('input-error');
+          this.showError('Please enter a valid time (e.g., 25:00 or 1:23:45)');
+          this.hideResults();
+          return;
+        }
+
+        // Convert custom distance and pace interval to metres
+        distanceMetres = this.convertDistanceToMetres(parseFloat(distanceValue), distanceUnit);
+        const paceIntervalMetres = this.convertDistanceToMetres(parseFloat(paceIntervalValue), paceIntervalUnit);
+        distanceDisplayName = `${distanceValue} ${distanceUnit}`;
+
+        // Calculate pace over the custom interval
+        // Formula: pace = totalTime / (distance / paceInterval)
+        const paceSeconds = totalTimeSeconds / (distanceMetres / paceIntervalMetres);
+
+        // Create a synthetic event config for display
+        const eventConfig = {
+          displayName: distanceDisplayName,
+          distance: parseFloat(distanceValue),
+          unit: distanceUnit
+        };
+
+        const paceIntervalInfo = {
+          value: parseFloat(paceIntervalValue),
+          unit: paceIntervalUnit,
+          metres: paceIntervalMetres
+        };
+
+        this.displayPaceResults(paceSeconds, null, distanceMetres, eventConfig, totalTimeSeconds, paceIntervalInfo);
+
+        this.saveToHistory({
+          mode: 'pace',
+          distance: distanceDisplayName,
+          totalTime: formatTotalTime(totalTimeSeconds),
+          pace: `${formatPaceTime(paceSeconds)} /${paceIntervalValue}${paceIntervalUnit}`,
+          timestamp: Date.now()
+        });
       }
-
-      // Parse time
-      const totalTimeSeconds = parseTimeInput(timeInput);
-      if (!this.validateTime(totalTimeSeconds)) {
-        this.timeInputPace.classList.add('input-error');
-        this.showError('Please enter a valid time (e.g., 25:00 or 1:23:45)');
-        this.hideResults();
-        return;
-      }
-
-      // Get distance in metres
-      const distanceMetres = getDistanceInMetres(distanceKey, this.eventsConfig);
-      const eventConfig = this.getEventConfig(distanceKey);
-
-      // Calculate pace
-      const paceSeconds = calculatePace(distanceMetres, totalTimeSeconds, paceUnit);
-
-      // Display results
-      this.displayPaceResults(paceSeconds, paceUnit, distanceMetres, eventConfig, totalTimeSeconds);
-
-      // Save to history
-      this.saveToHistory({
-        mode: 'pace',
-        distance: eventConfig.displayName,
-        totalTime: formatTotalTime(totalTimeSeconds),
-        pace: `${formatPaceTime(paceSeconds)} /${paceUnit}`,
-        timestamp: Date.now()
-      });
 
     } catch (error) {
       console.error('Calculation error:', error);
@@ -250,50 +588,133 @@ class PaceCalculator extends PaceCalculatorBase {
   /**
    * Handle time mode calculation (Distance + Pace → Total Time)
    */
-  handleTimeModeCalculate() {
+  handleTimeModeCalculate(subMode) {
     try {
       this.hideError();
-      this.paceInputTime.classList.remove('input-error');
-      this.distanceSelectTime.classList.remove('input-error');
 
-      // Get inputs
-      const paceInput = this.paceInputTime.value.trim();
-      const distanceKey = this.distanceSelectTime.value;
-      const paceUnit = this.paceUnitSelectTime.value;
+      let paceInput, paceUnitSelect, distanceMetres, distanceDisplayName;
 
-      // Validate inputs
-      if (!paceInput || !distanceKey) {
-        this.hideResults();
-        return;
+      if (subMode === 'standard') {
+        // Standard mode: use dropdown distance
+        paceInput = this.paceInputTimeStandard;
+        const distanceSelect = this.distanceSelectTimeStandard;
+        paceUnitSelect = this.paceUnitSelectTimeStandard;
+
+        paceInput.classList.remove('input-error');
+        distanceSelect.classList.remove('input-error');
+
+        const paceInputValue = paceInput.value.trim();
+        const distanceKey = distanceSelect.value;
+
+        if (!paceInputValue || !distanceKey) {
+          this.hideResults();
+          return;
+        }
+
+        const paceSeconds = parsePaceInput(paceInputValue);
+        if (!this.validatePace(paceSeconds)) {
+          paceInput.classList.add('input-error');
+          this.showError('Please enter a valid pace (e.g., 5:00 or 4:30)');
+          this.hideResults();
+          return;
+        }
+
+        distanceMetres = getDistanceInMetres(distanceKey, this.eventsConfig);
+        const eventConfig = this.getEventConfig(distanceKey);
+        distanceDisplayName = eventConfig.displayName;
+        const paceUnit = paceUnitSelect.value;
+
+        const totalTimeSeconds = calculateTotalTime(distanceMetres, paceSeconds, paceUnit);
+        this.displayTimeResults(totalTimeSeconds, paceSeconds, paceUnit, distanceMetres, eventConfig);
+
+        this.saveToHistory({
+          mode: 'totalTime',
+          distance: distanceDisplayName,
+          totalTime: formatTotalTime(totalTimeSeconds),
+          pace: `${formatPaceTime(paceSeconds)} /${paceUnit}`,
+          timestamp: Date.now()
+        });
+
+      } else {
+        // Advanced mode: use custom distance input and pace interval
+        paceInput = this.paceInputTimeAdvanced;
+        const distanceInput = this.distanceInputTimeAdvanced;
+        const distanceUnitSelect = this.distanceUnitSelectTimeAdvanced;
+        const paceIntervalInput = this.paceIntervalInputTimeAdvanced;
+        const paceIntervalUnitSelect = this.paceIntervalUnitSelectTimeAdvanced;
+
+        paceInput.classList.remove('input-error');
+        distanceInput.classList.remove('input-error');
+        paceIntervalInput.classList.remove('input-error');
+
+        const paceInputValue = paceInput.value.trim();
+        const distanceValue = distanceInput.value.trim();
+        const distanceUnit = distanceUnitSelect.value;
+        const paceIntervalValue = paceIntervalInput.value.trim();
+        const paceIntervalUnit = paceIntervalUnitSelect.value;
+
+        if (!paceInputValue || !distanceValue || !paceIntervalValue) {
+          this.hideResults();
+          return;
+        }
+
+        // Validate distance
+        if (!this.validateDistance(distanceValue)) {
+          distanceInput.classList.add('input-error');
+          this.showError('Please enter a valid distance greater than zero');
+          this.hideResults();
+          return;
+        }
+
+        // Validate pace interval
+        if (!this.validateDistance(paceIntervalValue)) {
+          paceIntervalInput.classList.add('input-error');
+          this.showError('Please enter a valid pace interval greater than zero');
+          this.hideResults();
+          return;
+        }
+
+        // Validate pace
+        const paceSeconds = parsePaceInput(paceInputValue);
+        if (!this.validatePace(paceSeconds)) {
+          paceInput.classList.add('input-error');
+          this.showError('Please enter a valid pace (e.g., 5:00 or 4:30)');
+          this.hideResults();
+          return;
+        }
+
+        // Convert custom distance and pace interval to metres
+        distanceMetres = this.convertDistanceToMetres(parseFloat(distanceValue), distanceUnit);
+        const paceIntervalMetres = this.convertDistanceToMetres(parseFloat(paceIntervalValue), paceIntervalUnit);
+        distanceDisplayName = `${distanceValue} ${distanceUnit}`;
+
+        // Calculate total time using custom pace interval
+        // Formula: totalTime = pace * (distance / paceInterval)
+        const totalTimeSeconds = paceSeconds * (distanceMetres / paceIntervalMetres);
+
+        // Create a synthetic event config for display
+        const eventConfig = {
+          displayName: distanceDisplayName,
+          distance: parseFloat(distanceValue),
+          unit: distanceUnit
+        };
+
+        const paceIntervalInfo = {
+          value: parseFloat(paceIntervalValue),
+          unit: paceIntervalUnit,
+          metres: paceIntervalMetres
+        };
+
+        this.displayTimeResults(totalTimeSeconds, paceSeconds, null, distanceMetres, eventConfig, paceIntervalInfo);
+
+        this.saveToHistory({
+          mode: 'totalTime',
+          distance: distanceDisplayName,
+          totalTime: formatTotalTime(totalTimeSeconds),
+          pace: `${formatPaceTime(paceSeconds)} /${paceIntervalValue}${paceIntervalUnit}`,
+          timestamp: Date.now()
+        });
       }
-
-      // Parse pace
-      const paceSeconds = parsePaceInput(paceInput);
-      if (!this.validatePace(paceSeconds)) {
-        this.paceInputTime.classList.add('input-error');
-        this.showError('Please enter a valid pace (e.g., 5:00 or 4:30)');
-        this.hideResults();
-        return;
-      }
-
-      // Get distance in metres
-      const distanceMetres = getDistanceInMetres(distanceKey, this.eventsConfig);
-      const eventConfig = this.getEventConfig(distanceKey);
-
-      // Calculate total time
-      const totalTimeSeconds = calculateTotalTime(distanceMetres, paceSeconds, paceUnit);
-
-      // Display results
-      this.displayTimeResults(totalTimeSeconds, paceSeconds, paceUnit, distanceMetres, eventConfig);
-
-      // Save to history
-      this.saveToHistory({
-        mode: 'totalTime',
-        distance: eventConfig.displayName,
-        totalTime: formatTotalTime(totalTimeSeconds),
-        pace: `${formatPaceTime(paceSeconds)} /${paceUnit}`,
-        timestamp: Date.now()
-      });
 
     } catch (error) {
       console.error('Calculation error:', error);
@@ -305,21 +726,36 @@ class PaceCalculator extends PaceCalculatorBase {
   /**
    * Display pace calculation results
    */
-  displayPaceResults(paceSeconds, paceUnit, distanceMetres, eventConfig, totalTimeSeconds) {
+  displayPaceResults(paceSeconds, paceUnit, distanceMetres, eventConfig, totalTimeSeconds, paceIntervalInfo = null) {
     this.resultsContent.innerHTML = '';
+
+    // Determine display format based on whether we have custom pace interval
+    let paceDisplayText;
+    let pacePerKm;
+
+    if (paceIntervalInfo) {
+      // Advanced mode with custom pace interval
+      paceDisplayText = `${formatPaceTime(paceSeconds)} /${paceIntervalInfo.value}${paceIntervalInfo.unit}`;
+      // Convert custom pace to pace per km for equivalents calculation
+      pacePerKm = paceSeconds / (paceIntervalInfo.metres / 1000);
+    } else {
+      // Standard mode
+      paceDisplayText = `${formatPaceTime(paceSeconds)} /${paceUnit}`;
+      pacePerKm = paceSeconds / (paceUnit === 'mile' ? 1.609344 : 1);
+    }
 
     // Main result card
     const mainCard = document.createElement('div');
     mainCard.className = 'result-card';
     mainCard.innerHTML = `
       <h3 class="result-card__title">Your Pace</h3>
-      <div class="result-card__points">${formatPaceTime(paceSeconds)} /${paceUnit}</div>
+      <div class="result-card__points">${paceDisplayText}</div>
       <p class="result-card__content">To complete ${eventConfig.displayName} in ${formatTotalTime(totalTimeSeconds)}</p>
     `;
     this.resultsContent.appendChild(mainCard);
 
-    // Equivalent paces
-    const equivalents = getEquivalentPaces(paceSeconds / (paceUnit === 'mile' ? 1.609344 : 1));
+    // Equivalent paces (always show standard per km and per mile)
+    const equivalents = getEquivalentPaces(pacePerKm);
     const equivalentsCard = document.createElement('div');
     equivalentsCard.className = 'result-card';
     equivalentsCard.innerHTML = `
@@ -345,8 +781,9 @@ class PaceCalculator extends PaceCalculatorBase {
     `;
     this.resultsContent.appendChild(equivalentsCard);
 
-    // Splits
-    const splits = calculateSplits(distanceMetres, equivalents.perKm, eventConfig);
+    // Splits - use custom interval if provided
+    const splitIntervalMetres = paceIntervalInfo ? paceIntervalInfo.metres : 1000;
+    const splits = this.calculateCustomSplits(distanceMetres, pacePerKm, eventConfig, splitIntervalMetres, paceIntervalInfo);
     this.displaySplits(splits);
 
     this.showResults();
@@ -355,8 +792,23 @@ class PaceCalculator extends PaceCalculatorBase {
   /**
    * Display total time calculation results
    */
-  displayTimeResults(totalTimeSeconds, paceSeconds, paceUnit, distanceMetres, eventConfig) {
+  displayTimeResults(totalTimeSeconds, paceSeconds, paceUnit, distanceMetres, eventConfig, paceIntervalInfo = null) {
     this.resultsContent.innerHTML = '';
+
+    // Determine display format based on whether we have custom pace interval
+    let paceDisplayText;
+    let pacePerKm;
+
+    if (paceIntervalInfo) {
+      // Advanced mode with custom pace interval
+      paceDisplayText = `${formatPaceTime(paceSeconds)} /${paceIntervalInfo.value}${paceIntervalInfo.unit}`;
+      // Convert custom pace to pace per km for equivalents calculation
+      pacePerKm = paceSeconds / (paceIntervalInfo.metres / 1000);
+    } else {
+      // Standard mode
+      paceDisplayText = `${formatPaceTime(paceSeconds)} /${paceUnit}`;
+      pacePerKm = paceSeconds / (paceUnit === 'mile' ? 1.609344 : 1);
+    }
 
     // Main result card
     const mainCard = document.createElement('div');
@@ -364,12 +816,12 @@ class PaceCalculator extends PaceCalculatorBase {
     mainCard.innerHTML = `
       <h3 class="result-card__title">Projected Finish Time</h3>
       <div class="result-card__points">${formatTotalTime(totalTimeSeconds)}</div>
-      <p class="result-card__content">For ${eventConfig.displayName} at ${formatPaceTime(paceSeconds)} /${paceUnit} pace</p>
+      <p class="result-card__content">For ${eventConfig.displayName} at ${paceDisplayText} pace</p>
     `;
     this.resultsContent.appendChild(mainCard);
 
-    // Equivalent paces
-    const equivalents = getEquivalentPaces(paceSeconds / (paceUnit === 'mile' ? 1.609344 : 1));
+    // Equivalent paces (always show standard per km and per mile)
+    const equivalents = getEquivalentPaces(pacePerKm);
     const equivalentsCard = document.createElement('div');
     equivalentsCard.className = 'result-card';
     equivalentsCard.innerHTML = `
@@ -395,11 +847,59 @@ class PaceCalculator extends PaceCalculatorBase {
     `;
     this.resultsContent.appendChild(equivalentsCard);
 
-    // Splits
-    const splits = calculateSplits(distanceMetres, equivalents.perKm, eventConfig);
+    // Splits - use custom interval if provided
+    const splitIntervalMetres = paceIntervalInfo ? paceIntervalInfo.metres : 1000;
+    const splits = this.calculateCustomSplits(distanceMetres, pacePerKm, eventConfig, splitIntervalMetres, paceIntervalInfo);
     this.displaySplits(splits);
 
     this.showResults();
+  }
+
+  /**
+   * Calculate split times at custom intervals
+   */
+  calculateCustomSplits(distanceMetres, pacePerKm, eventConfig, splitIntervalMetres, paceIntervalInfo) {
+    const splits = [];
+    let currentDistanceMetres = 0;
+
+    // Calculate split interval unit for display
+    const splitInterval = paceIntervalInfo ? paceIntervalInfo.value : 1;
+    const splitUnit = paceIntervalInfo ? paceIntervalInfo.unit : 'km';
+
+    while (currentDistanceMetres < distanceMetres) {
+      currentDistanceMetres += splitIntervalMetres;
+
+      // Don't exceed total distance
+      if (currentDistanceMetres > distanceMetres) {
+        currentDistanceMetres = distanceMetres;
+      }
+
+      // Calculate time for this split
+      const splitTime = (currentDistanceMetres / 1000) * pacePerKm;
+
+      // Calculate pace for this split segment (should be same as overall pace)
+      const segmentDistanceKm = splitIntervalMetres / 1000;
+      const segmentPace = segmentDistanceKm * pacePerKm;
+
+      // Format distance label
+      let distanceLabel;
+      if (paceIntervalInfo) {
+        // Custom interval - show in the interval units
+        const distanceInIntervalUnits = currentDistanceMetres / splitIntervalMetres * paceIntervalInfo.value;
+        distanceLabel = `${distanceInIntervalUnits.toFixed(2)} ${splitUnit}`;
+      } else {
+        // Standard 1km intervals
+        distanceLabel = `${(currentDistanceMetres / 1000).toFixed(2)} km`;
+      }
+
+      splits.push({
+        distanceLabel: distanceLabel,
+        time: splitTime,
+        pace: pacePerKm
+      });
+    }
+
+    return splits;
   }
 
   /**
