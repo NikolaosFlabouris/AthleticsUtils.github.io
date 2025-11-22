@@ -2,7 +2,6 @@
 
 /* Mode Toggle Section - Make it prominent and distinct */
 .calculator__controls > .form-group:first-child {
-  margin-bottom: var(--spacing-xl);
   padding-bottom: var(--spacing-lg);
   border-bottom: 2px solid var(--color-border-light);
 }
@@ -20,12 +19,6 @@
   flex-direction: column;
   gap: var(--spacing-lg);
   width: 100%;
-}
-
-/* Button container gets extra spacing on top */
-.form-group--button {
-  margin-top: var(--spacing-xl);
-  padding-top: var(--spacing-md);
 }
 
 /* Distance Input Group - side-by-side layout for custom distance input */
@@ -64,6 +57,5 @@
   /* Button spans full width within mode controls */
   .form-group--button {
     grid-column: 1 / -1;
-    margin-top: var(--spacing-2xl);
   }
 }

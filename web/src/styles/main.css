@@ -71,7 +71,7 @@ body {
   background: var(--color-background);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
-  padding: var(--spacing-xl);
+  padding: var(--spacing-lg);
   margin-bottom: var(--spacing-xl);
 }
 
@@ -300,11 +300,6 @@ body {
 
 .event-dropdown__list::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-tertiary);
-}
-
-/* Hand Timing Checkbox */
-.hand-timing-checkbox {
-  margin-top: var(--spacing-sm);
 }
 
 .checkbox-label {

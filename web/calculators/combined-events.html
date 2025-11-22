@@ -44,11 +44,25 @@
 
         <div class="calculator__controls">
           <div class="form-group">
-            <label for="gender-select">Gender</label>
-            <select id="gender-select" class="form-select" aria-label="Select gender">
-              <option value="men">Men</option>
-              <option value="women">Women</option>
-            </select>
+            <label>Gender</label>
+            <div class="gender-toggle">
+              <button
+                type="button"
+                id="gender-toggle-men"
+                class="gender-toggle__option"
+                data-gender="men"
+              >
+                Men
+              </button>
+              <button
+                type="button"
+                id="gender-toggle-women"
+                class="gender-toggle__option"
+                data-gender="women"
+              >
+                Women
+              </button>
+            </div>
           </div>
 
           <div class="form-group">

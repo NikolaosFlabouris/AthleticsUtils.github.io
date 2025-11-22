@@ -18,7 +18,7 @@ import {
 class CombinedEventsCalculator {
   constructor() {
     // State
-    this.currentGender = 'men';
+    this.currentGender = null;
     this.currentCombinedEvent = null;
     this.performances = {}; // { eventKey: { value, isHandTimed, score, inputValue } }
     this.totalScore = 0;
@@ -29,7 +29,8 @@ class CombinedEventsCalculator {
     this.debounceTimers = {};
 
     // DOM elements (will be initialized)
-    this.genderSelect = null;
+    this.genderToggleMen = null;
+    this.genderToggleWomen = null;
     this.combinedEventSelect = null;
     this.clearAllBtn = null;
     this.calculatorForm = null;
@@ -63,8 +64,8 @@ class CombinedEventsCalculator {
       // Setup event listeners
       this.setupEventListeners();
 
-      // Populate combined event selector with default gender
-      await this.populateCombinedEventSelector(this.currentGender);
+      // Initialize gender toggle from session storage
+      this.initializeGenderToggle();
 
       this.hideLoading();
     } catch (error) {
@@ -75,10 +76,22 @@ class CombinedEventsCalculator {
   }
 
   /**
+   * Initialize gender toggle from session storage
+   */
+  initializeGenderToggle() {
+    // Load saved gender from session storage, default to 'men'
+    const savedGender = sessionStorage.getItem('selectedGender') || 'men';
+
+    // Set the initial gender and trigger UI update
+    this.handleGenderToggle(savedGender);
+  }
+
+  /**
    * Initialize DOM elements
    */
   initializeElements() {
-    this.genderSelect = document.getElementById('gender-select');
+    this.genderToggleMen = document.getElementById('gender-toggle-men');
+    this.genderToggleWomen = document.getElementById('gender-toggle-women');
     this.combinedEventSelect = document.getElementById('combined-event-select');
     this.clearAllBtn = document.getElementById('clear-all-btn');
     this.calculatorForm = document.getElementById('calculator-form');
@@ -98,8 +111,9 @@ class CombinedEventsCalculator {
    * Setup event listeners
    */
   setupEventListeners() {
-    // Gender selection change
-    this.genderSelect?.addEventListener('change', () => this.handleGenderChange());
+    // Gender toggle buttons
+    this.genderToggleMen?.addEventListener('click', () => this.handleGenderToggle('men'));
+    this.genderToggleWomen?.addEventListener('click', () => this.handleGenderToggle('women'));
 
     // Combined event selection change
     this.combinedEventSelect?.addEventListener('change', () => this.handleCombinedEventChange());
@@ -142,10 +156,29 @@ class CombinedEventsCalculator {
   }
 
   /**
-   * Handle gender selection change
+   * Handle gender toggle button click
    */
-  async handleGenderChange() {
-    this.currentGender = this.genderSelect.value;
+  async handleGenderToggle(gender) {
+    // Don't do anything if clicking the already selected gender
+    if (this.currentGender === gender) {
+      return;
+    }
+
+    this.currentGender = gender;
+
+    // Save to session storage
+    sessionStorage.setItem('selectedGender', gender);
+
+    // Remove active class from all gender toggle buttons
+    this.genderToggleMen?.classList.remove('gender-toggle__option--active');
+    this.genderToggleWomen?.classList.remove('gender-toggle__option--active');
+
+    // Add active class to the selected gender button
+    if (gender === 'men') {
+      this.genderToggleMen?.classList.add('gender-toggle__option--active');
+    } else if (gender === 'women') {
+      this.genderToggleWomen?.classList.add('gender-toggle__option--active');
+    }
 
     // Reset selection and form
     this.combinedEventSelect.value = '';
@@ -318,7 +351,7 @@ class CombinedEventsCalculator {
 
       const checkboxLabel = document.createElement('label');
       checkboxLabel.htmlFor = `hand-timing-${eventKey}`;
-      checkboxLabel.textContent = 'Hand timed';
+      checkboxLabel.textContent = 'Hand Timed';
       checkboxLabel.className = 'hand-timing-label';
 
       // Checkbox event listener

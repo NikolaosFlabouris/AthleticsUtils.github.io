@@ -1,7 +1,6 @@
 /* History Table Component */
 .history-section {
   margin-top: var(--spacing-2xl);
-  padding: var(--spacing-lg);
   background: var(--color-background);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
