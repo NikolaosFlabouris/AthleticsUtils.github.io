@@ -549,7 +549,7 @@ class PaceCalculator extends PaceCalculatorBase {
         // Convert custom distance and pace interval to metres
         distanceMetres = this.convertDistanceToMetres(parseFloat(distanceValue), distanceUnit);
         const paceIntervalMetres = this.convertDistanceToMetres(parseFloat(paceIntervalValue), paceIntervalUnit);
-        distanceDisplayName = `${distanceValue} ${distanceUnit}`;
+        distanceDisplayName = `${distanceValue}${distanceUnit}`;
 
         // Calculate pace over the custom interval
         // Formula: pace = totalTime / (distance / paceInterval)
