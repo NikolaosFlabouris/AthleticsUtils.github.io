@@ -22,12 +22,25 @@
   flex-wrap: nowrap;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: thin; /* Firefox */
 }
 
+/* Thin scrollbar for Chrome/Safari/Edge */
 .navigation__list::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
+  height: 4px;
+}
+
+.navigation__list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.navigation__list::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 2px;
+}
+
+.navigation__list::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-secondary);
 }
 
 .navigation__link {
@@ -38,6 +51,7 @@
   border-radius: var(--radius-md);
   transition: all var(--transition-fast);
   display: block;
+  white-space: nowrap;
 }
 
 .navigation__link:hover {
