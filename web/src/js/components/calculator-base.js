@@ -6,6 +6,7 @@
 import { scoringDataLoader } from '../data/scoring-data-loader.js';
 import { eventConfigLoader } from '../data/event-config-loader.js';
 import { getPerformancePlaceholder } from '../utils/performance-parser.js';
+import { createIcon } from './icon.js';
 
 export class BaseCalculator {
   constructor(selectors) {
@@ -37,7 +38,36 @@ export class BaseCalculator {
 
   async initialize() {
     this.setupEventListeners();
+    this.setupDropdownIcons();
     await this.loadScoringData();
+  }
+
+  setupDropdownIcons() {
+    // Add chevron icon to event trigger button
+    if (this.eventTrigger && !this.eventTrigger.querySelector('.icon')) {
+      const chevron = createIcon('chevron-down', 'icon--sm');
+      this.eventTrigger.appendChild(chevron);
+    }
+
+    // Add search icon to event search input
+    if (this.eventSearch) {
+      const searchContainer = this.eventSearch.parentElement;
+      if (searchContainer && !searchContainer.querySelector('.icon')) {
+        const searchIcon = createIcon('search', 'icon--sm');
+        searchIcon.style.position = 'absolute';
+        searchIcon.style.left = 'var(--spacing-sm)';
+        searchIcon.style.top = '50%';
+        searchIcon.style.transform = 'translateY(-50%)';
+        searchIcon.style.pointerEvents = 'none';
+        searchIcon.style.color = 'var(--color-text-secondary)';
+
+        // Add padding to search input to make room for icon
+        this.eventSearch.style.paddingLeft = 'calc(var(--spacing-sm) * 2 + 1rem)';
+
+        searchContainer.style.position = 'relative';
+        searchContainer.appendChild(searchIcon);
+      }
+    }
   }
 
   setupEventListeners() {

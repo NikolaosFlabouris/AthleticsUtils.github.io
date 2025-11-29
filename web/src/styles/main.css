@@ -1,6 +1,7 @@
 @import './variables.css';
 @import './components/navigation.css';
 @import './components/toggle.css';
+@import './components/icon.css';
 @import './components/results-card.css';
 @import './components/history-table.css';
 @import './combined-events.css';

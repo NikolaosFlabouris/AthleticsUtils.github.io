@@ -9,6 +9,7 @@ import { parsePerformance, formatPerformance } from '../utils/performance-parser
 import { eventConfigLoader } from '../data/event-config-loader.js';
 import { HistoryManager } from '../utils/history-manager.js';
 import { makeCollapsible } from '../utils/collapsible-section.js';
+import { createIcon } from '../components/icon.js';
 
 class PerformanceCalculator extends BaseCalculator {
   constructor(selectors) {
@@ -408,9 +409,16 @@ class PerformanceCalculator extends BaseCalculator {
       <td class="history-row__performance">${entry.performance}</td>
       <td class="history-row__score">${entry.score}</td>
       <td class="history-row__actions">
-        <button class="history-delete-btn" aria-label="Delete" data-history-id="${entry.id}">×</button>
+        <button class="history-delete-btn" aria-label="Delete" data-history-id="${entry.id}"></button>
       </td>
     `;
+
+    // Add delete icon to button
+    const deleteBtn = row.querySelector('.history-delete-btn');
+    if (deleteBtn) {
+      const deleteIcon = createIcon('x', 'icon--sm');
+      deleteBtn.appendChild(deleteIcon);
+    }
 
     // Remove animation class after animation completes
     setTimeout(() => row.classList.remove('history-row--adding'), 200);

@@ -5,6 +5,7 @@
 
 import { Navigation } from '../components/navigation.js';
 import { PaceCalculatorBase } from '../components/pace-calculator-base.js';
+import { createIcon } from '../components/icon.js';
 import {
   calculatePace,
   calculateTotalTime,
@@ -1042,9 +1043,16 @@ class PaceCalculator extends PaceCalculatorBase {
         <td class="history-row__performance">${entry.totalTime}</td>
         <td class="history-row__performance">${entry.pace}</td>
         <td>
-          <button class="history-delete-btn" data-id="${entry.id}" aria-label="Delete">×</button>
+          <button class="history-delete-btn" data-id="${entry.id}" aria-label="Delete"></button>
         </td>
       `;
+
+      // Add delete icon to button
+      const deleteBtn = row.querySelector('.history-delete-btn');
+      if (deleteBtn) {
+        const deleteIcon = createIcon('x', 'icon--sm');
+        deleteBtn.appendChild(deleteIcon);
+      }
 
       // Add drag and drop listeners
       row.addEventListener('dragstart', (e) => this.handleDragStart(e));
@@ -1053,7 +1061,6 @@ class PaceCalculator extends PaceCalculatorBase {
       row.addEventListener('dragend', (e) => this.handleDragEnd(e));
 
       // Add delete listener
-      const deleteBtn = row.querySelector('.history-delete-btn');
       deleteBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         this.deleteHistoryEntry(entry.id);
