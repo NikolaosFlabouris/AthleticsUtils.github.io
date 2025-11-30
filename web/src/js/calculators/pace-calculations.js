@@ -167,10 +167,26 @@ export function getEquivalentPaces(paceSecondsPerKm) {
   const paceSecondsPerMile = convertPaceUnit(paceSecondsPerKm, 'km', 'mile');
   const speed = convertPaceToSpeed(paceSecondsPerKm, 'km');
 
+  // Calculate pace per meter, yard, and foot
+  const paceSecondsPerMeter = paceSecondsPerKm / 1000;
+  const paceSecondsPerYard = paceSecondsPerMeter * 0.9144;
+  const paceSecondsPerFoot = paceSecondsPerMeter * 0.3048;
+
+  // Calculate meters per second and other speed measurements
+  const metersPerSecond = 1000 / paceSecondsPerKm;
+  const feetPerSecond = metersPerSecond * 3.28084;
+  const yardsPerSecond = metersPerSecond / 0.9144;
+
   return {
     perKm: paceSecondsPerKm,
     perMile: paceSecondsPerMile,
+    perMeter: paceSecondsPerMeter,
+    perYard: paceSecondsPerYard,
+    perFoot: paceSecondsPerFoot,
     kmh: speed.kmh,
-    mph: speed.mph
+    mph: speed.mph,
+    metersPerSecond: metersPerSecond,
+    feetPerSecond: feetPerSecond,
+    yardsPerSecond: yardsPerSecond
   };
 }
