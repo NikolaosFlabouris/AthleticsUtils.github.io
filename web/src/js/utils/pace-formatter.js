@@ -183,16 +183,22 @@ export function formatDistance(value, unit) {
     return `${formatted} ${unit}`;
   }
 
+  // For yards and feet, show up to 2 decimal places if needed
+  if (unit === 'yards' || unit === 'feet') {
+    const formatted = value.toFixed(2).replace(/\.?0+$/, '');
+    return `${formatted} ${unit}`;
+  }
+
   // For metres, show whole numbers
   return `${Math.round(value)} ${unit}`;
 }
 
 /**
  * Get distance equivalent in different unit
- * Converts between km, miles, and metres
+ * Converts between km, miles, metres, yards, and feet
  * @param {number} distance - Distance value
- * @param {string} fromUnit - Source unit ('km', 'miles', or 'metres')
- * @param {string} toUnit - Target unit ('km', 'miles', or 'metres')
+ * @param {string} fromUnit - Source unit ('km', 'miles', 'metres', 'm', 'yards', 'feet')
+ * @param {string} toUnit - Target unit ('km', 'miles', 'metres', 'm', 'yards', 'feet')
  * @returns {number} Converted distance
  */
 export function convertDistance(distance, fromUnit, toUnit) {
@@ -204,24 +210,27 @@ export function convertDistance(distance, fromUnit, toUnit) {
     return distance;
   }
 
-  // Convert to metres first
-  let metres;
-  if (fromUnit === 'km') {
-    metres = distance * 1000;
-  } else if (fromUnit === 'miles') {
-    metres = distance * 1609.344;
-  } else {
-    metres = distance;
-  }
+  // Normalize unit names
+  const normalizeUnit = (unit) => {
+    if (unit === 'metres') return 'm';
+    return unit;
+  };
 
-  // Convert from metres to target unit
-  if (toUnit === 'km') {
-    return metres / 1000;
-  } else if (toUnit === 'miles') {
-    return metres / 1609.344;
-  } else {
-    return metres;
-  }
+  fromUnit = normalizeUnit(fromUnit);
+  toUnit = normalizeUnit(toUnit);
+
+  // Conversion factors to metres
+  const toMetres = {
+    'm': 1,
+    'km': 1000,
+    'miles': 1609.344,
+    'yards': 0.9144,
+    'feet': 0.3048
+  };
+
+  // Convert to metres first, then to target unit
+  const metres = distance * (toMetres[fromUnit] || 1);
+  return metres / (toMetres[toUnit] || 1);
 }
 
 /**
