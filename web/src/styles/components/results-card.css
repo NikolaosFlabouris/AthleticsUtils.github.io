@@ -28,7 +28,7 @@
 /* Equivalencies Grid */
 .equivalencies-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: var(--spacing-md);
   margin-top: var(--spacing-md);
 }
@@ -92,11 +92,4 @@
 .result-card__collapsible-content--collapsed {
   max-height: 0;
   opacity: 0;
-}
-
-/* Responsive */
-@media (min-width: 1024px) {
-  .equivalencies-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  }
 }
