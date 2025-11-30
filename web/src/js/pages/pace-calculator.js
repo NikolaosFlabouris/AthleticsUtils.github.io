@@ -10,7 +10,6 @@ import {
   calculatePace,
   calculateTotalTime,
   getDistanceInMetres,
-  calculateSplits,
   getEquivalentPaces
 } from '../calculators/pace-calculations.js';
 import {
@@ -885,7 +884,6 @@ class PaceCalculator extends PaceCalculatorBase {
     let currentDistanceMetres = 0;
 
     // Calculate split interval unit for display
-    const splitInterval = paceIntervalInfo ? paceIntervalInfo.value : 1;
     const splitUnit = paceIntervalInfo ? paceIntervalInfo.unit : 'km';
 
     while (currentDistanceMetres < distanceMetres) {
@@ -898,10 +896,6 @@ class PaceCalculator extends PaceCalculatorBase {
 
       // Calculate time for this split
       const splitTime = (currentDistanceMetres / 1000) * pacePerKm;
-
-      // Calculate pace for this split segment (should be same as overall pace)
-      const segmentDistanceKm = splitIntervalMetres / 1000;
-      const segmentPace = segmentDistanceKm * pacePerKm;
 
       // Format distance label
       let distanceLabel;
@@ -916,8 +910,7 @@ class PaceCalculator extends PaceCalculatorBase {
 
       splits.push({
         distanceLabel: distanceLabel,
-        time: splitTime,
-        pace: pacePerKm
+        time: splitTime
       });
     }
 
@@ -943,12 +936,11 @@ class PaceCalculator extends PaceCalculatorBase {
     splitsContent.className = 'history-table-container';
 
     let tableHTML = `
-      <table class="history-table">
+      <table class="history-table history-table--splits">
         <thead>
           <tr>
             <th>Distance</th>
             <th>Cumulative Time</th>
-            <th>Pace</th>
           </tr>
         </thead>
         <tbody>
@@ -956,10 +948,9 @@ class PaceCalculator extends PaceCalculatorBase {
 
     splits.forEach(split => {
       tableHTML += `
-        <tr>
+        <tr class="history-row">
           <td>${split.distanceLabel}</td>
           <td class="history-row__performance">${formatTotalTime(split.time)}</td>
-          <td class="history-row__performance">${formatPaceTime(split.pace)} /km</td>
         </tr>
       `;
     });

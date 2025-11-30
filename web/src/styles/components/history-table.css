@@ -48,6 +48,19 @@
   width: 40px;
 }
 
+/* Column width constraints for better layout */
+.history-table th:nth-child(3),
+.history-table td:nth-child(3) {
+  min-width: 120px;
+  white-space: nowrap;
+}
+
+/* Override last column width for splits table (no delete button column) */
+.history-table--splits th:last-child,
+.history-table--splits td:last-child {
+  width: auto;
+}
+
 .history-row {
   border-bottom: 1px solid var(--color-border-light);
   cursor: move;
